@@ -1,15 +1,15 @@
-package com.github.TKnudsen.activeLearning.models.learning;
+package com.github.TKnudsen.activeLearning.models.learning.classification;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 
 /**
  * <p>
- * Title: INumericalToNumericalLearningModel
+ * Title: INumericalToClassLearningModel
  * </p>
  * 
  * <p>
  * Description: basic algorithmic model that learns label information for
- * features. The labels are numbers, thus, regression-like models are trained.
+ * features. The labels are strings, thus, classifier-like models are trained.
  * </p>
  * 
  * <p>
@@ -18,8 +18,8 @@ import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.Numeric
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.0
+ * @version 1.01
  */
-public interface INumericalToNumericalLearningModel extends ILearningModel<Double, NumericalFeatureVector, Double> {
+public interface INumericalDataClassifier extends IClassifier<Double, NumericalFeatureVector> {
 
 }

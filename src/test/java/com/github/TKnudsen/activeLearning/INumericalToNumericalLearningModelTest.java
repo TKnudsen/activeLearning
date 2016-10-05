@@ -1,10 +1,13 @@
 package com.github.TKnudsen.activeLearning;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
-import com.github.TKnudsen.activeLearning.models.learning.INumericalToNumericalLearningModel;
+import com.github.TKnudsen.activeLearning.models.learning.INumericalDataRegression;
 
 /**
  * <p>
@@ -25,7 +28,7 @@ import com.github.TKnudsen.activeLearning.models.learning.INumericalToNumericalL
  */
 public class INumericalToNumericalLearningModelTest {
 
-	static class MyNum2NumLearningModel implements INumericalToNumericalLearningModel {
+	static class MyNum2NumLearningModel implements INumericalDataRegression {
 		Double label;
 
 		public void train(NumericalFeatureVector featureVector, Double label) {
@@ -33,10 +36,31 @@ public class INumericalToNumericalLearningModelTest {
 		}
 
 		public Double test(NumericalFeatureVector featureVector) {
-			// TODO Auto-generated method stub
 			return label;
 		}
 
+		@Override
+		public void train(List<NumericalFeatureVector> featureVectors, List<Double> labels) {
+			for (int i = 0; i < featureVectors.size(); i++)
+				if (labels.size() > i)
+					label = labels.get(i);
+		}
+
+		@Override
+		public List<Double> test(List<NumericalFeatureVector> featureVectors) {
+			List<Double> labels = new ArrayList<>();
+
+			for (int i = 0; i < featureVectors.size(); i++)
+				if (labels.size() > i)
+					labels.add(label);
+
+			return labels;
+		}
+
+		@Override
+		public Double getAccuracy(NumericalFeatureVector featureVector) {
+			return 1.0;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -45,8 +69,13 @@ public class INumericalToNumericalLearningModelTest {
 		@SuppressWarnings("rawtypes")
 		ILearningModel model = new MyNum2NumLearningModel();
 
-		model.train(null, 2.0);
+		List<NumericalFeatureVector> fvs = new ArrayList<>();
+		fvs.add(null);
+
+		List<Double> labels = new ArrayList<>();
+		labels.add(2.0);
+
+		model.train(fvs, labels);
 		assert (model.test(null).equals(2.0));
 	}
-
 }
