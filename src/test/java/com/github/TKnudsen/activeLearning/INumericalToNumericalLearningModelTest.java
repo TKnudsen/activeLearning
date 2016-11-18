@@ -61,6 +61,12 @@ public class INumericalToNumericalLearningModelTest {
 		public Double getAccuracy(NumericalFeatureVector featureVector) {
 			return 1.0;
 		}
+
+		@Override
+		public void train(List<NumericalFeatureVector> featureVectors, String targetVariable) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	@SuppressWarnings("unchecked")

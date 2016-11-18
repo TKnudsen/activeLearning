@@ -21,11 +21,13 @@ import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.02
+ * @version 1.03
  */
 public interface ILearningModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>, Y> {
 
 	public void train(List<X> featureVectors, List<Y> labels);
+
+	public void train(List<X> featureVectors, String targetVariable);
 
 	public List<Y> test(List<X> featureVectors);
 }
