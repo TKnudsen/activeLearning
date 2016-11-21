@@ -1,4 +1,4 @@
-package com.github.TKnudsen.activeLearning.models.learning.evaluation;
+package com.github.TKnudsen.activeLearning.models.evaluation;
 
 import java.util.List;
 
