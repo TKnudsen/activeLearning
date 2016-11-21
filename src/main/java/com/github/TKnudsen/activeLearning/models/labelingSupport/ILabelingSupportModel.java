@@ -1,4 +1,4 @@
-package com.github.TKnudsen.activeLearning.models.coverage;
+package com.github.TKnudsen.activeLearning.models.labelingSupport;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
  * @author Juergen Bernard
  * @version 1.0
  */
-public interface ICoverageModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>> {
+public interface ILabelingSupportModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>> {
 
 	public void addLabeledCandidate(X featureVector);
 
