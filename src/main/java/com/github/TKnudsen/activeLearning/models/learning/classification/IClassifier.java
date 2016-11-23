@@ -27,4 +27,8 @@ import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 public interface IClassifier<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>> extends ILearningModel<O, X, String> {
 
 	public Map<String, Double> getLabelDistribution(X featureVector);
+
+	public double getLabelProbabilityMax(X featureVector);
+
+	public double getLabelProbabilityDeltaMaxSecond(X featureVector);
 }
