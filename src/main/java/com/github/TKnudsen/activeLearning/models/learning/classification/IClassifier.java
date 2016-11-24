@@ -31,4 +31,6 @@ public interface IClassifier<O, X extends AbstractFeatureVector<O, ? extends Fea
 	public double getLabelProbabilityMax(X featureVector);
 
 	public double getLabelProbabilityDeltaMaxSecond(X featureVector);
+	
+	public double getLabelProbabilityDiversity(X featureVector);
 }
