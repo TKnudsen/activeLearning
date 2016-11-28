@@ -29,33 +29,13 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * @author Juergen Bernard
  * @version 1.01
  */
-public class ModelUncertaintyBasedActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
-
-	private IClassifier<Double, NumericalFeatureVector> learningModel;
+public class ModelUncertaintyBasedActiveLearningModel extends AbstractActiveLearningModel {
 
 	public ModelUncertaintyBasedActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
-		this.learningModel = learningModel;
+		super(learningModel);
 	}
-
-	List<NumericalFeatureVector> trainingFeatureVectors;
-	List<NumericalFeatureVector> learningCandidateFeatureVectors;
 
 	private Map<NumericalFeatureVector, Double> scoresMaxValues;
-
-	private Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> ranking;
-	private Double remainingUncertainty;
-
-	@Override
-	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
-		this.trainingFeatureVectors = featureVectors;
-	}
-
-	@Override
-	public void setLearningCandidates(List<NumericalFeatureVector> featureVectors) {
-		this.learningCandidateFeatureVectors = featureVectors;
-
-		ranking = null;
-	}
 
 	private void refreshRelativeScores() {
 		learningModel.test(learningCandidateFeatureVectors);
@@ -76,14 +56,14 @@ public class ModelUncertaintyBasedActiveLearningModel implements IActiveLearning
 		// calculate overall score
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(scoresMaxValues.get(fv), fv));
-			remainingUncertainty += (1-scoresMaxValues.get(fv));
+			remainingUncertainty += (1 - scoresMaxValues.get(fv));
 
 			if (ranking.size() > count)
 				ranking.remove(ranking.size() - 1);
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("ModelUncertaintyBasedActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
+		System.out.println("ModelUncertaintyBasedActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
 
 	@Override
@@ -99,13 +79,4 @@ public class ModelUncertaintyBasedActiveLearningModel implements IActiveLearning
 		return fvs;
 	}
 
-	@Override
-	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
-		return learningModel;
-	}
-
-	@Override
-	public double getRemainingUncertainty() {
-		return remainingUncertainty;
-	}
 }

@@ -30,16 +30,11 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * @author Juergen Bernard
  * @version 1.01
  */
-public class DefaultActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
-
-	private IClassifier<Double, NumericalFeatureVector> learningModel;
+public class DefaultActiveLearningModel extends AbstractActiveLearningModel {
 
 	public DefaultActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
-		this.learningModel = learningModel;
+		super(learningModel);
 	}
-
-	List<NumericalFeatureVector> trainingFeatureVectors;
-	List<NumericalFeatureVector> learningCandidateFeatureVectors;
 
 	private Map<NumericalFeatureVector, Double> relativeScoresMaxValue;
 	private double relativeScoresMaxValueMin;
@@ -47,21 +42,6 @@ public class DefaultActiveLearningModel implements IActiveLearningModelClassific
 	private Map<NumericalFeatureVector, Double> relativeScoresDeltaMaxSecond;
 	private double relativeScoresDeltaMaxSecondMin;
 	private double relativeScoresDeltaMaxSecondMax;
-
-	private Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> ranking;
-	private Double remainingUncertainty;
-
-	@Override
-	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
-		this.trainingFeatureVectors = featureVectors;
-	}
-
-	@Override
-	public void setLearningCandidates(List<NumericalFeatureVector> featureVectors) {
-		this.learningCandidateFeatureVectors = featureVectors;
-
-		ranking = null;
-	}
 
 	private void refreshRelativeScores() {
 		learningModel.test(learningCandidateFeatureVectors);
@@ -114,14 +94,14 @@ public class DefaultActiveLearningModel implements IActiveLearningModelClassific
 			double v1 = relativeScoresMaxValue.get(fv);
 			double v2 = relativeScoresDeltaMaxSecond.get(fv);
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(v1 + v2, fv));
-			remainingUncertainty += (((1 - v1) + (1 - v2))*0.5);
+			remainingUncertainty += (((1 - v1) + (1 - v2)) * 0.5);
 
 			if (ranking.size() > count)
 				ranking.remove(ranking.size() - 1);
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("DefaultActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
+		System.out.println("DefaultActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
 
 	@Override
@@ -135,15 +115,5 @@ public class DefaultActiveLearningModel implements IActiveLearningModelClassific
 			fvs.add(i, ranking.get(i).getValue());
 
 		return fvs;
-	}
-
-	@Override
-	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
-		return learningModel;
-	}
-
-	@Override
-	public double getRemainingUncertainty() {
-		return remainingUncertainty;
 	}
 }

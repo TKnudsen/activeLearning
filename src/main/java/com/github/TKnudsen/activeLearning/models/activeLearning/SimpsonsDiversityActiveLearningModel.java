@@ -6,33 +6,12 @@ import java.util.List;
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public class SimpsonsDiversityActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
-
-	List<NumericalFeatureVector> trainingFeatureVectors;
-	List<NumericalFeatureVector> learningCandidateFeatureVectors;
-
-	private Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> ranking;
-	private Double remainingUncertainty;
-
-	private IClassifier<Double, NumericalFeatureVector> learningModel;
+public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearningModel {
 
 	public SimpsonsDiversityActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
-		this.learningModel = learningModel;
-	}
-
-	@Override
-	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
-		this.trainingFeatureVectors = featureVectors;
-	}
-
-	@Override
-	public void setLearningCandidates(List<NumericalFeatureVector> featureVectors) {
-		this.learningCandidateFeatureVectors = featureVectors;
-
-		ranking = null;
+		super(learningModel);
 	}
 
 	@Override
@@ -51,7 +30,7 @@ public class SimpsonsDiversityActiveLearningModel implements IActiveLearningMode
 		ranking = new Ranking<>();
 		remainingUncertainty = 0.0;
 
-//		learningModel.test(learningCandidateFeatureVectors);
+		// learningModel.test(learningCandidateFeatureVectors);
 
 		// calculate overall score
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
@@ -64,17 +43,7 @@ public class SimpsonsDiversityActiveLearningModel implements IActiveLearningMode
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
-	}
-
-	@Override
-	public double getRemainingUncertainty() {
-		return remainingUncertainty;
-	}
-
-	@Override
-	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
-		return learningModel;
+		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
 
 }
