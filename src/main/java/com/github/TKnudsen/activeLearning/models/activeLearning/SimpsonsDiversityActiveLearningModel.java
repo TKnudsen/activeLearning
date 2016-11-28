@@ -51,6 +51,8 @@ public class SimpsonsDiversityActiveLearningModel implements IActiveLearningMode
 		ranking = new Ranking<>();
 		remainingUncertainty = 0.0;
 
+//		learningModel.test(learningCandidateFeatureVectors);
+
 		// calculate overall score
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
 			double v1 = learningModel.getLabelProbabilityDiversity(fv);
@@ -62,6 +64,7 @@ public class SimpsonsDiversityActiveLearningModel implements IActiveLearningMode
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
+		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
 	}
 
 	@Override

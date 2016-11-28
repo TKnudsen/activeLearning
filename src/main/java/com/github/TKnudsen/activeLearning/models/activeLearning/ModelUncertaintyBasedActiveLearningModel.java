@@ -83,6 +83,7 @@ public class ModelUncertaintyBasedActiveLearningModel implements IActiveLearning
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
+		System.out.println("ModelUncertaintyBasedActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
 	}
 
 	@Override

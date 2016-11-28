@@ -121,6 +121,7 @@ public class DefaultActiveLearningModel implements IActiveLearningModelClassific
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
+		System.out.println("DefaultActiveLearningModel: remaining uncertainty = "+remainingUncertainty);
 	}
 
 	@Override
