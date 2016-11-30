@@ -12,15 +12,36 @@ import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.Numeric
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public class MaximumComparisonQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
+/**
+ * <p>
+ * Title: VoteComparisonQueryByCommittee
+ * </p>
+ * 
+ * <p>
+ * Description: queries controversial instances/regions in the input space.
+ * Compares the label distributions of every candidate for a given set of
+ * models. The winning candidate poses those label distributions where the
+ * committee disagrees most.
+ * 
+ * Measure: Vote Comparison. Ratio of different Votes.
+ * </p>
+ * 
+ * <p>
+ * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * </p>
+ * 
+ * @author Juergen Bernard
+ * @version 1.03
+ */
+public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
 
-	public MaximumComparisonQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
+	public VoteComparisonQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
 		super(learningModels);
 	}
 
 	@Override
 	public String getComparisonMethod() {
-		return "Measures the disagreeing suggestions for labels of different models.";
+		return "Measures the ratio of disagreeing suggestions for labels of different models (votes).";
 	}
 
 	@Override
@@ -79,8 +100,6 @@ public class MaximumComparisonQueryByCommittee extends AbstractQueryByCommitteeA
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("QueryByCommitteeActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
-
+		System.out.println("VoteComparisonQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 	}
-
 }

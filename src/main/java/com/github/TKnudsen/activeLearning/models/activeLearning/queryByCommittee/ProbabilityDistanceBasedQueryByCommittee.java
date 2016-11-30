@@ -11,6 +11,27 @@ import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.Numeric
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
+/**
+ * <p>
+ * Title: ProbabilityDistanceBasedQueryByCommittee
+ * </p>
+ * 
+ * <p>
+ * Description: queries controversial instances/regions in the input space.
+ * Compares the label distributions of every candidate for a given set of
+ * models. The winning candidate poses those label distributions where the
+ * committee disagrees most.
+ * 
+ * Measure: Euclidean distances of probability distributions
+ * </p>
+ * 
+ * <p>
+ * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * </p>
+ * 
+ * @author Juergen Bernard
+ * @version 1.03
+ */
 public class ProbabilityDistanceBasedQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
 
 	public ProbabilityDistanceBasedQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
@@ -76,7 +97,7 @@ public class ProbabilityDistanceBasedQueryByCommittee extends AbstractQueryByCom
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("QueryByCommitteeActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
+		System.out.println("ProbabilityDistanceBasedQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 
 	}
 

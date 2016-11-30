@@ -14,9 +14,30 @@ import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public class EntropyBasedQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
+/**
+ * <p>
+ * Title: VoteEntropyQueryByCommittee
+ * </p>
+ * 
+ * <p>
+ * Description: queries controversial instances/regions in the input space.
+ * Compares the label distributions of every candidate for a given set of
+ * models. The winning candidate poses those label distributions where the
+ * committee disagrees most.
+ * 
+ * Measure: Vote Entropy
+ * </p>
+ * 
+ * <p>
+ * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * </p>
+ * 
+ * @author Juergen Bernard
+ * @version 1.03
+ */
+public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
 
-	public EntropyBasedQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
+	public VoteEntropyQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
 		super(learningModels);
 	}
 
@@ -90,6 +111,6 @@ public class EntropyBasedQueryByCommittee extends AbstractQueryByCommitteeActive
 		}
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
-		System.out.println("QueryByCommitteeActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
+		System.out.println("VoteEntropyQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 	}
 }

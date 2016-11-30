@@ -1,8 +1,9 @@
-package com.github.TKnudsen.activeLearning.models.activeLearning;
+package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
 public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearningModel {
