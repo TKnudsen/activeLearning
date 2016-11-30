@@ -1,5 +1,6 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
@@ -21,6 +22,21 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	protected Double remainingUncertainty;
 
 	protected IClassifier<Double, NumericalFeatureVector> learningModel;
+
+	@Override
+	public List<NumericalFeatureVector> suggestCandidates(int count) {
+
+		if (ranking == null)
+			calculateRanking(count);
+
+		List<NumericalFeatureVector> fvs = new ArrayList<>();
+		for (int i = 0; i < ranking.size(); i++)
+			fvs.add(i, ranking.get(i).getValue());
+
+		return fvs;
+	}
+
+	protected abstract void calculateRanking(int count);
 
 	@Override
 	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {

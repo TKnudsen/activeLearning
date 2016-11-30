@@ -1,14 +1,11 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
 /**
@@ -47,7 +44,8 @@ public class ModelUncertaintyBasedActiveLearningModel extends AbstractActiveLear
 		ranking = null;
 	}
 
-	private void calculateRanking(int count) {
+	@Override
+	protected void calculateRanking(int count) {
 		refreshRelativeScores();
 
 		ranking = new Ranking<>();
@@ -65,18 +63,4 @@ public class ModelUncertaintyBasedActiveLearningModel extends AbstractActiveLear
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("ModelUncertaintyBasedActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
-
-	@Override
-	public List<NumericalFeatureVector> suggestCandidates(int count) {
-
-		if (ranking == null)
-			calculateRanking(count);
-
-		List<NumericalFeatureVector> fvs = new ArrayList<>();
-		for (int i = 0; i < ranking.size(); i++)
-			fvs.add(i, ranking.get(i).getValue());
-
-		return fvs;
-	}
-
 }

@@ -1,8 +1,5 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -15,18 +12,7 @@ public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearning
 	}
 
 	@Override
-	public List<NumericalFeatureVector> suggestCandidates(int count) {
-		if (ranking == null)
-			calculateRanking(count);
-
-		List<NumericalFeatureVector> fvs = new ArrayList<>();
-		for (int i = 0; i < ranking.size(); i++)
-			fvs.add(i, ranking.get(i).getValue());
-
-		return fvs;
-	}
-
-	private void calculateRanking(int count) {
+	protected void calculateRanking(int count) {
 		ranking = new Ranking<>();
 		remainingUncertainty = 0.0;
 
@@ -45,5 +31,4 @@ public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearning
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
-
 }

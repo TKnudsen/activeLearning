@@ -2,6 +2,7 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommitte
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,9 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.IActiveLearningModelClassification;
+import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
-
-import weka.classifiers.Classifier;
 
 /**
  * <p>
@@ -22,9 +22,13 @@ import weka.classifiers.Classifier;
  * </p>
  * 
  * <p>
- * Description: compares the label distributions of every candidate for a given
- * set of models. The winning candidate poses those label distributions where
- * the committee disagrees most.
+ * Description: queries controversial instances/regions in the input space.
+ * Compares the label distributions of every candidate for a given set of
+ * models. The winning candidate poses those label distributions where the
+ * committee disagrees most.
+ * 
+ * Degree of freedom: measure of disagreement among committee members
+ * represented with the enum ComparisonMethod.
  * </p>
  * 
  * <p>
@@ -33,14 +37,14 @@ import weka.classifiers.Classifier;
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.0
+ * @version 1.02
  */
 public class QueryByCommitteeActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
 
 	private List<IClassifier<Double, NumericalFeatureVector>> learningModels;
 
 	public enum ComparisonMethod {
-		DistanceBased, MaximumComparison
+		DistanceBased, MaximumComparison, Entropy
 	};
 
 	private ComparisonMethod comparisonMethod;
@@ -126,6 +130,27 @@ public class QueryByCommitteeActiveLearningModel implements IActiveLearningModel
 				} else
 					dist = 1;
 				// dist = (Math.max(0, Math.min(dist, 1)));
+				break;
+			case Entropy:
+				// create distribution of winning labels
+				if (distributions != null && distributions.size() > 0) {
+					Map<String, Double> winningLabels = new HashMap();
+					for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels) {
+						List<String> test = classifier.test(Arrays.asList(fv));
+						String label = classifier.test(Arrays.asList(fv)).get(0);
+						if (test != null && test.size() > 0)
+							if (!winningLabels.containsKey(label))
+								winningLabels.put(label, 1.0);
+							else
+								winningLabels.put(label, winningLabels.get(label) + 1.0);
+					}
+
+					for (String label : winningLabels.keySet())
+						winningLabels.put(label, winningLabels.get(label) / (double) learningModels.size());
+
+					dist = EntropyBasedActiveLearning.calculateEntropy(winningLabels);
+				} else
+					dist = 1;
 				break;
 			default:
 				dist = 0;
