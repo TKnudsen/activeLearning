@@ -38,6 +38,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * 
  * @author Juergen Bernard
  * @version 1.02
+ * @deprecated
  */
 public class QueryByCommitteeActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
 
