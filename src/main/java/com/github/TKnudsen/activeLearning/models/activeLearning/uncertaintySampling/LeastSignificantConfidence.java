@@ -8,7 +8,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
 
 /**
  * <p>
- * Title: LastSignificantConfidence
+ * Title: LeastSignificantConfidence
  * </p>
  * 
  * <p>
@@ -24,9 +24,9 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * @author Juergen Bernard
  * @version 1.01
  */
-public class LastSignificantConfidence extends AbstractActiveLearningModel {
+public class LeastSignificantConfidence extends AbstractActiveLearningModel {
 
-	public LastSignificantConfidence(IClassifier<Double, NumericalFeatureVector> learningModel) {
+	public LeastSignificantConfidence(IClassifier<Double, NumericalFeatureVector> learningModel) {
 		super(learningModel);
 	}
 
