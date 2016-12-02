@@ -39,6 +39,12 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 
 	protected abstract void calculateRanking(int count);
 
+	/**
+	 * information about training data is not necessarily relevant for AL
+	 * models. Nevertheless we provide the information for convenience reasons.
+	 * 
+	 * @return
+	 */
 	public List<NumericalFeatureVector> getTrainingData() {
 		return this.trainingFeatureVectors;
 	}
@@ -55,6 +61,17 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	@Override
 	public void setLearningCandidates(List<NumericalFeatureVector> featureVectors) {
 		this.learningCandidateFeatureVectors = featureVectors;
+
+		ranking = null;
+	}
+
+	@Override
+	public void addCandidateVectorToTrainingVector(NumericalFeatureVector fv) {
+		if (this.learningCandidateFeatureVectors.contains(fv)) {
+			this.learningCandidateFeatureVectors.remove(fv);
+			this.trainingFeatureVectors.add(fv);
+		} else
+			throw new IllegalArgumentException("EvaluationBench.addCandidateVectorToTrainingVector: no such candidate vector.");
 
 		ranking = null;
 	}

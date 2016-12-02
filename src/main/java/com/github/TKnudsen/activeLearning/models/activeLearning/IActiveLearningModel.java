@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 
 /**
@@ -29,6 +30,8 @@ public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? ex
 	public void setTrainingData(List<X> featureVectors);
 
 	public void setLearningCandidates(List<X> featureVectors);
+
+	public void addCandidateVectorToTrainingVector(NumericalFeatureVector fv);
 
 	public List<X> suggestCandidates(int count);
 
