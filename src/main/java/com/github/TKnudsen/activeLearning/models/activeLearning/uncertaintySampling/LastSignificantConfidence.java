@@ -50,4 +50,14 @@ public class LastSignificantConfidence extends AbstractActiveLearningModel {
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("LastSignificantConfidence: remaining uncertainty = " + remainingUncertainty);
 	}
+	
+	@Override
+	public String getName() {
+		return "Last Significant Confidence";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

@@ -32,4 +32,14 @@ public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearning
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
+	
+	@Override
+	public String getName() {
+		return "Simpsons Diversity";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

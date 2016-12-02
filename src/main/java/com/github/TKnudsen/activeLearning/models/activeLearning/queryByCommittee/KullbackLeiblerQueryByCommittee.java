@@ -170,4 +170,15 @@ public class KullbackLeiblerQueryByCommittee extends AbstractQueryByCommitteeAct
 	public void setNormalizeAlphabetLength(boolean normalizeAlphabetLength) {
 		this.normalizeAlphabetLength = normalizeAlphabetLength;
 	}
+
+	@Override
+	public String getName() {
+		return "Kullback Leibler QBC";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Active Learning Model using the Kullback Leibler Divergence in combination with a Query by Committee approach";
+	}
+
 }

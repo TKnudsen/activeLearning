@@ -52,4 +52,14 @@ public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
 
 		return entropy;
 	}
+	
+	@Override
+	public String getName() {
+		return "Entropy-Based Sampling";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

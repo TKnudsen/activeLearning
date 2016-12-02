@@ -113,4 +113,14 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("VoteEntropyQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 	}
+	
+	@Override
+	public String getName() {
+		return "Vote Entropy QBC";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

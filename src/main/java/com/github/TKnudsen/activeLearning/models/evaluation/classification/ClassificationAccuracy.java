@@ -13,6 +13,8 @@ public class ClassificationAccuracy implements INumericalFeaturesVectorModelEval
 		double correct = 0;
 
 		List<String> test = model.test(testData);
+		if (test == null || test.size() == 0)
+			return 0.0;
 
 		for (int i = 0; i < testData.size(); i++) {
 			if (testData.get(i) != null && testData.get(i).get(targetVariable) != null) {

@@ -109,4 +109,14 @@ public class ProbabilityDistanceBasedQueryByCommittee extends AbstractQueryByCom
 
 		return d;
 	}
+
+	@Override
+	public String getName() {
+		return "Prability Distance QBC";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

@@ -102,4 +102,13 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("VoteComparisonQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 	}
+	@Override
+	public String getName() {
+		return "Vote Comparison QBC";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }

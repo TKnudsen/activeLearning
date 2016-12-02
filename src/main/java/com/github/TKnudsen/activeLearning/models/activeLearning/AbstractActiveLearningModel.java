@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public abstract class AbstractActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector> {
+public abstract class AbstractActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector>, ISelfDescription {
 
 	public AbstractActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
 		this.learningModel = learningModel;
@@ -38,9 +39,17 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 
 	protected abstract void calculateRanking(int count);
 
+	public List<NumericalFeatureVector> getTrainingData() {
+		return this.trainingFeatureVectors;
+	}
+
 	@Override
 	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
 		this.trainingFeatureVectors = featureVectors;
+	}
+
+	public List<NumericalFeatureVector> getLearningCandidates() {
+		return this.learningCandidateFeatureVectors;
 	}
 
 	@Override

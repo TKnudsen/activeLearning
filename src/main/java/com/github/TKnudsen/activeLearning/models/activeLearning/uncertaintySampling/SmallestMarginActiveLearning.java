@@ -58,4 +58,14 @@ public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SmallestMarginActiveLearning: remaining uncertainty = " + remainingUncertainty);
 	}
+	
+	@Override
+	public String getName() {
+		return "Smallest MMargin";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
 }
