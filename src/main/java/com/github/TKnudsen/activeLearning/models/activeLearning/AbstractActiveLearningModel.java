@@ -15,7 +15,7 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	public AbstractActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
 		this.learningModel = learningModel;
 	}
-
+	
 	protected List<NumericalFeatureVector> trainingFeatureVectors;
 	protected List<NumericalFeatureVector> learningCandidateFeatureVectors;
 
