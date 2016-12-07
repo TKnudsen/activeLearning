@@ -8,7 +8,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
 
 /**
  * <p>
- * Title: LastSignificantConfidence
+ * Title: SmallestMarginActiveLearning
  * </p>
  * 
  * <p>
