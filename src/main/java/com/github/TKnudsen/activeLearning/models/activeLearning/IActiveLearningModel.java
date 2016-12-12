@@ -36,11 +36,13 @@ public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? ex
 	public List<X> suggestCandidates(int count);
 
 	/**
-	 * TODO realy essential?!!
+	 * TODO really essential?!!
 	 * 
 	 * @return
 	 */
 	public ILearningModel<O, X, Y> getLearningModel();
 
 	public double getRemainingUncertainty();
+
+	public double getCandidateApplicabilityScore(X featureVector);
 }

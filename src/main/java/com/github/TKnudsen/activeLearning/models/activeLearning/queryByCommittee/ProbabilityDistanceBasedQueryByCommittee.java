@@ -1,6 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommittee;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class ProbabilityDistanceBasedQueryByCommittee extends AbstractQueryByCom
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>(); 
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -90,6 +92,7 @@ public class ProbabilityDistanceBasedQueryByCommittee extends AbstractQueryByCom
 			dist = (Math.max(0, Math.min(dist, 1)));
 			// update ranking
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+			queryApplicabilities.put(fv, dist);	
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)

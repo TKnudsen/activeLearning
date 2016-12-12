@@ -1,6 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommittee;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class KullbackLeiblerQueryByCommittee extends AbstractQueryByCommitteeAct
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -91,6 +93,7 @@ public class KullbackLeiblerQueryByCommittee extends AbstractQueryByCommitteeAct
 
 			// update ranking
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)
@@ -180,5 +183,4 @@ public class KullbackLeiblerQueryByCommittee extends AbstractQueryByCommitteeAct
 	public String getDescription() {
 		return "Active Learning Model using the Kullback Leibler Divergence in combination with a Query by Committee approach";
 	}
-
 }

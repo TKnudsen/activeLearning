@@ -52,6 +52,7 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>(); 
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -104,6 +105,7 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 
 			// update ranking
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)

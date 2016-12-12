@@ -1,5 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
+import java.util.HashMap;
+
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -32,7 +34,10 @@ public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
 
 	@Override
 	protected void calculateRanking(int count) {
+		learningModel.test(learningCandidateFeatureVectors);
+
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
 		// learningModel.test(learningCandidateFeatureVectors);
@@ -41,6 +46,7 @@ public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
 			double margin = learningModel.getLabelProbabilityMargin(fv);
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(margin, fv));
+			queryApplicabilities.put(fv, 1 - margin);
 			remainingUncertainty += (1 - margin);
 
 			if (ranking.size() > count)

@@ -1,5 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
+import java.util.HashMap;
+
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -32,7 +34,10 @@ public class LeastSignificantConfidence extends AbstractActiveLearningModel {
 
 	@Override
 	protected void calculateRanking(int count) {
+		learningModel.test(learningCandidateFeatureVectors);
+
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
 		learningModel.test(learningCandidateFeatureVectors);
@@ -41,6 +46,7 @@ public class LeastSignificantConfidence extends AbstractActiveLearningModel {
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
 			double likelihood = learningModel.getLabelProbabilityMax(fv);
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(likelihood, fv));
+			queryApplicabilities.put(fv, 1 - likelihood);
 			remainingUncertainty += (1 - likelihood);
 
 			if (ranking.size() > count)
@@ -50,7 +56,7 @@ public class LeastSignificantConfidence extends AbstractActiveLearningModel {
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("LastSignificantConfidence: remaining uncertainty = " + remainingUncertainty);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Last Significant Confidence";

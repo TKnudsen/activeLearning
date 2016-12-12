@@ -1,5 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
+import java.util.HashMap;
+
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -14,15 +16,17 @@ public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearning
 
 	@Override
 	protected void calculateRanking(int count) {
-		ranking = new Ranking<>();
-		remainingUncertainty = 0.0;
+		learningModel.test(learningCandidateFeatureVectors);
 
-		// learningModel.test(learningCandidateFeatureVectors);
+		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
+		remainingUncertainty = 0.0;
 
 		// calculate overall score
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
 			double v1 = learningModel.getLabelProbabilityDiversity(fv);
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(v1, fv));
+			queryApplicabilities.put(fv, 1 - v1);
 			remainingUncertainty += (1 - v1);
 
 			if (ranking.size() > count)
@@ -32,7 +36,7 @@ public class SimpsonsDiversityActiveLearningModel extends AbstractActiveLearning
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SimpsonsDiveristyActiveLearningModel: remaining uncertainty = " + remainingUncertainty);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Simpsons Diversity";

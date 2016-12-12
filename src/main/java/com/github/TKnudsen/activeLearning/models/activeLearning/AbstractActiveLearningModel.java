@@ -2,6 +2,7 @@ package com.github.TKnudsen.activeLearning.models.activeLearning;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
@@ -15,18 +16,18 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	public AbstractActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
 		this.learningModel = learningModel;
 	}
-	
+
 	protected List<NumericalFeatureVector> trainingFeatureVectors;
 	protected List<NumericalFeatureVector> learningCandidateFeatureVectors;
 
 	protected Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> ranking;
+	protected Map<NumericalFeatureVector, Double> queryApplicabilities;
 	protected Double remainingUncertainty;
 
 	protected IClassifier<Double, NumericalFeatureVector> learningModel;
 
 	@Override
 	public List<NumericalFeatureVector> suggestCandidates(int count) {
-
 		if (ranking == null)
 			calculateRanking(count);
 
@@ -63,6 +64,14 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 		this.learningCandidateFeatureVectors = featureVectors;
 
 		ranking = null;
+		queryApplicabilities = null;
+	}
+	
+	@Override
+	public double getCandidateApplicabilityScore(NumericalFeatureVector featureVector) {
+		if (queryApplicabilities != null)
+			return queryApplicabilities.get(featureVector);
+		return Double.NaN;
 	}
 
 	@Override
@@ -74,6 +83,7 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 			throw new IllegalArgumentException("EvaluationBench.addCandidateVectorToTrainingVector: no such candidate vector.");
 
 		ranking = null;
+		queryApplicabilities = null;
 	}
 
 	@Override
@@ -84,5 +94,5 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	@Override
 	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
 		return learningModel;
-	}
+	}	
 }

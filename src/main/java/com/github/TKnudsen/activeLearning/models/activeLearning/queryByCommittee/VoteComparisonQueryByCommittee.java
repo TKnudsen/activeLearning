@@ -2,6 +2,7 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommitte
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>(); 
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -93,6 +95,7 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 
 			// update ranking
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)

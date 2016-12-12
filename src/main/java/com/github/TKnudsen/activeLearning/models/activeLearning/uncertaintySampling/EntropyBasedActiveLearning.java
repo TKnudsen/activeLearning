@@ -1,5 +1,6 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
@@ -16,10 +17,11 @@ public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
 
 	@Override
 	protected void calculateRanking(int count) {
+		learningModel.test(learningCandidateFeatureVectors);
+		
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
-
-		// learningModel.test(learningCandidateFeatureVectors);
 
 		// calculate ranking based on entropy
 		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
@@ -29,6 +31,7 @@ public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
 			// System.out.println(entropy);
 
 			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - entropy, fv));
+			queryApplicabilities.put(fv, entropy);			
 			remainingUncertainty += (entropy);
 
 			if (ranking.size() > count)
@@ -52,7 +55,7 @@ public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
 
 		return entropy;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Entropy-Based Sampling";
