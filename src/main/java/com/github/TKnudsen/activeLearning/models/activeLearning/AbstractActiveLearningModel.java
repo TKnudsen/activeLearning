@@ -50,6 +50,10 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 		return this.trainingFeatureVectors;
 	}
 
+	public Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> getRanking() {
+		return ranking;
+	}
+
 	@Override
 	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
 		this.trainingFeatureVectors = featureVectors;
@@ -66,7 +70,7 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 		ranking = null;
 		queryApplicabilities = null;
 	}
-	
+
 	@Override
 	public double getCandidateApplicabilityScore(NumericalFeatureVector featureVector) {
 		if (queryApplicabilities != null)
@@ -94,5 +98,5 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	@Override
 	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
 		return learningModel;
-	}	
+	}
 }
