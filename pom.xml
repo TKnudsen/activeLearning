@@ -36,5 +36,10 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>de.javagl</groupId>
+			<artifactId>nd-tuples</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 </project>
