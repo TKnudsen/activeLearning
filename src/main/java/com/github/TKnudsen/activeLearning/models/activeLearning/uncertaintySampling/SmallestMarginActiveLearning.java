@@ -1,16 +1,17 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
-import java.util.List;
+import java.util.HashMap;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
 /**
  * <p>
- * Title: LastSignificantConfidence
+ * Title: SmallestMarginActiveLearning
  * </p>
  * 
  * <p>
@@ -26,30 +27,28 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * @author Juergen Bernard
  * @version 1.01
  */
-public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
+public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public SmallestMarginActiveLearning(IClassifier<Double, NumericalFeatureVector> learningModel) {
+	public SmallestMarginActiveLearning(IClassifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
 	@Override
-	public List<NumericalFeatureVector> suggestCandidates(int count) {
-		return null;
-	}
-
-	@Override
 	protected void calculateRanking(int count) {
+		learningModel.test(learningCandidateFeatureVectors);
+
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
-//		learningModel.test(learningCandidateFeatureVectors);
+		// learningModel.test(learningCandidateFeatureVectors);
 
 		// calculate overall score
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
-			double v1 = learningModel.getLabelProbabilityMax(fv);
-			double v2 = learningModel.getLabelProbabilityDeltaMaxSecond(fv);
-			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(Math.abs(v1 - v2), fv));
-			remainingUncertainty += (1 - Math.abs(v1 - v2));
+		for (FV fv : learningCandidateFeatureVectors) {
+			double margin = learningModel.getLabelProbabilityMargin(fv);
+			ranking.add(new EntryWithComparableKey<Double, FV>(margin, fv));
+			queryApplicabilities.put(fv, 1 - margin);
+			remainingUncertainty += (1 - margin);
 
 			if (ranking.size() > count)
 				ranking.remove(ranking.size() - 1);
@@ -57,5 +56,15 @@ public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SmallestMarginActiveLearning: remaining uncertainty = " + remainingUncertainty);
+	}
+
+	@Override
+	public String getName() {
+		return "Smallest MMargin";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
 	}
 }

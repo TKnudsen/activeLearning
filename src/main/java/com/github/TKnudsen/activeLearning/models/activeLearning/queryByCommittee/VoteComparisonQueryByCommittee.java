@@ -2,13 +2,15 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommitte
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
@@ -33,9 +35,9 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * @author Juergen Bernard
  * @version 1.03
  */
-public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
+public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
 
-	public VoteComparisonQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
+	public VoteComparisonQueryByCommittee(List<IClassifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
 
@@ -46,16 +48,17 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels)
+		for (IClassifier<O, FV> classifier : learningModels)
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>(); 
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels)
+			for (IClassifier<O, FV> classifier : learningModels)
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
@@ -82,7 +85,7 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 
 			if (distributions != null && distributions.size() > 0) {
 				Set<String> winningLabels = new HashSet<>();
-				for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels) {
+				for (IClassifier<O, FV> classifier : learningModels) {
 					List<String> test = classifier.test(Arrays.asList(fv));
 					if (test != null && test.size() > 0)
 						winningLabels.add(classifier.test(Arrays.asList(fv)).get(0));
@@ -92,7 +95,8 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 				dist = 1;
 
 			// update ranking
-			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+			ranking.add(new EntryWithComparableKey<Double, FV>(1 - dist, fv));
+			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)
@@ -101,5 +105,14 @@ public class VoteComparisonQueryByCommittee extends AbstractQueryByCommitteeActi
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("VoteComparisonQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
+	}
+	@Override
+	public String getName() {
+		return "Vote Comparison QBC";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
 	}
 }

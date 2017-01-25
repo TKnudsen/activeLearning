@@ -1,34 +1,38 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
+public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public EntropyBasedActiveLearning(IClassifier<Double, NumericalFeatureVector> learningModel) {
+	public EntropyBasedActiveLearning(IClassifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
 	@Override
 	protected void calculateRanking(int count) {
+		learningModel.test(learningCandidateFeatureVectors);
+		
 		ranking = new Ranking<>();
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
-		// learningModel.test(learningCandidateFeatureVectors);
-
 		// calculate ranking based on entropy
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			Map<String, Double> distribution = learningModel.getLabelDistribution(fv);
 
 			double entropy = calculateEntropy(distribution);
 			// System.out.println(entropy);
 
-			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - entropy, fv));
+			ranking.add(new EntryWithComparableKey<Double, FV>(1 - entropy, fv));
+			queryApplicabilities.put(fv, entropy);			
 			remainingUncertainty += (entropy);
 
 			if (ranking.size() > count)
@@ -51,5 +55,15 @@ public class EntropyBasedActiveLearning extends AbstractActiveLearningModel {
 		entropy /= Math.log(2.0);
 
 		return entropy;
+	}
+
+	@Override
+	public String getName() {
+		return "Entropy-Based Sampling";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
 	}
 }
