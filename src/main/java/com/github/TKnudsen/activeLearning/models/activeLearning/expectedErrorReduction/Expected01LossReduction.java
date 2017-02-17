@@ -46,9 +46,9 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 			for (String label : labels) {
 				List<FV> newTrainingSet = new ArrayList<>();
 				for (FV fv1 : learningCandidateFeatureVectors) {
-					newTrainingSet.add((FV) fv1.getCopy());
+					newTrainingSet.add((FV) fv1.clone());
 				}
-				fv = (FV) fv.getCopy();
+				fv = (FV) fv.clone();
 				fv.add("class", Double.valueOf(label));
 				newTrainingSet.add(fv);
 				IClassifier<O, FV> newClassifier = null;

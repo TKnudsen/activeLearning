@@ -1,12 +1,12 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommittee;
 
+import java.util.List;
+
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
-
-import java.util.List;
 
 /**
  * <p>

@@ -1,5 +1,9 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.densityWeighting;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
@@ -7,10 +11,6 @@ import com.github.TKnudsen.ComplexDataObject.data.features.FeatureType;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * For more information see: An Analysis of Active Learning Strategies for

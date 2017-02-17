@@ -46,9 +46,9 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 			for (String label : labels) {
 				List<FV> newTrainingSet = new ArrayList<>();
 				for (FV fv1 : learningCandidateFeatureVectors) {
-                    newTrainingSet.add((FV) fv1.getCopy());
-                }
-                fv = (FV) fv.getCopy();
+					newTrainingSet.add((FV) fv1.clone());
+				}
+				fv = (FV) fv.clone();
 				fv.add("class", Double.valueOf(label));
 				newTrainingSet.add(fv);
 				IClassifier<O, FV> newClassifier = null;
