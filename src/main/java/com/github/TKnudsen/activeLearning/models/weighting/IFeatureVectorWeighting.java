@@ -1,3 +1,4 @@
+
 package com.github.TKnudsen.activeLearning.models.weighting;
 
 import java.util.List;
@@ -9,3 +10,4 @@ public interface IFeatureVectorWeighting<O, X extends AbstractFeatureVector<O, ?
 
 	public void setWeight(List<X> featureVectors, List<Double> weights);
 }
+

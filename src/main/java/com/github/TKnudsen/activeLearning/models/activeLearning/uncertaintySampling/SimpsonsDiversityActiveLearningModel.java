@@ -26,7 +26,9 @@ public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureV
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			double v1 = learningModel.getLabelProbabilityDiversity(fv);
+
 			ranking.add(new EntryWithComparableKey<Double, FV>(v1, fv));
+
 			queryApplicabilities.put(fv, 1 - v1);
 			remainingUncertainty += (1 - v1);
 

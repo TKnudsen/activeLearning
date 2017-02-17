@@ -20,7 +20,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 JÃ¼rgen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
@@ -44,9 +44,11 @@ public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O,
 		// learningModel.test(learningCandidateFeatureVectors);
 
 		// calculate overall score
+
 		for (FV fv : learningCandidateFeatureVectors) {
 			double margin = learningModel.getLabelProbabilityMargin(fv);
 			ranking.add(new EntryWithComparableKey<Double, FV>(margin, fv));
+
 			queryApplicabilities.put(fv, 1 - margin);
 			remainingUncertainty += (1 - margin);
 

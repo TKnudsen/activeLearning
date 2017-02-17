@@ -31,7 +31,9 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 			double entropy = calculateEntropy(distribution);
 			// System.out.println(entropy);
 
+
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - entropy, fv));
+
 			queryApplicabilities.put(fv, entropy);			
 			remainingUncertainty += (entropy);
 

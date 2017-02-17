@@ -5,15 +5,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
+
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
+
 public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>>
 		implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
+
 
     protected List<FV> trainingFeatureVectors;
     protected List<FV> learningCandidateFeatureVectors;
@@ -23,12 +27,15 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
     }
 
 
+
 	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
 	protected Map<FV, Double> queryApplicabilities;
+
 	protected Double remainingUncertainty;
 
     @Override
     public List<FV> suggestCandidates(int count) {
+
 
         if (ranking == null)
             calculateRanking(count);
@@ -36,6 +43,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
         List<FV> fvs = new ArrayList<>();
         for (int i = 0; i < ranking.size(); i++)
             fvs.add(i, ranking.get(i).getValue());
+
 
         return fvs;
     }
@@ -56,12 +64,28 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 		return ranking;
 	}
 
+	/**
+	 * information about training data is not necessarily relevant for AL
+	 * models. Nevertheless we provide the information for convenience reasons.
+	 * 
+	 * @return
+	 */
+	public List<NumericalFeatureVector> getTrainingData() {
+		return this.trainingFeatureVectors;
+	}
+
+	public Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> getRanking() {
+		return ranking;
+	}
+
 	@Override
 	public void setTrainingData(List<FV> featureVectors) {
 		this.trainingFeatureVectors = featureVectors;
 	}
 
+
 	public List<FV> getLearningCandidates() {
+
 		return this.learningCandidateFeatureVectors;
 	}
 
@@ -75,6 +99,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	@Override
 	public double getCandidateApplicabilityScore(FV featureVector) {
+
 		if (queryApplicabilities != null)
 			return queryApplicabilities.get(featureVector);
 		return Double.NaN;

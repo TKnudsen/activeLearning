@@ -20,7 +20,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 JÃ¼rgen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
@@ -47,6 +47,29 @@ public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ?
 		for (FV fv : learningCandidateFeatureVectors) {
 			double likelihood = learningModel.getLabelProbabilityMax(fv);
 			ranking.add(new EntryWithComparableKey<Double, FV>(likelihood, fv));
+			queryApplicabilities.put(fv, 1 - likelihood);
+			remainingUncertainty += (1 - likelihood);
+
+			if (ranking.size() > count)
+				ranking.remove(ranking.size() - 1);
+		}
+
+		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
+		System.out.println("LastSignificantConfidence: remaining uncertainty = " + remainingUncertainty);
+	}
+
+	@Override
+	public String getName() {
+		return "Last Significant Confidence";
+	}
+
+	@Override
+	public String getDescription() {
+		return getName();
+	}
+}
+
+			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(likelihood, fv));
 			queryApplicabilities.put(fv, 1 - likelihood);
 			remainingUncertainty += (1 - likelihood);
 

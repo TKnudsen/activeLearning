@@ -28,7 +28,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 JÃ¼rgen Bernard https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
@@ -92,7 +92,9 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 				dist = 1;
 			dist = (Math.max(0, Math.min(dist, 1)));
 			// update ranking
+
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - dist, fv));
+
 			queryApplicabilities.put(fv, dist);	
 			remainingUncertainty += dist;
 
