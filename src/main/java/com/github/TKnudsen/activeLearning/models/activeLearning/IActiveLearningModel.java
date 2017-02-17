@@ -18,7 +18,7 @@ import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 JÃ¼rgen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
@@ -31,7 +31,9 @@ public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? ex
 
 	public void setLearningCandidates(List<X> featureVectors);
 
-	public void addCandidateVectorToTrainingVector(NumericalFeatureVector fv);
+
+	public void addCandidateVectorToTrainingVector(X fv);
+
 
 	public List<X> suggestCandidates(int count);
 

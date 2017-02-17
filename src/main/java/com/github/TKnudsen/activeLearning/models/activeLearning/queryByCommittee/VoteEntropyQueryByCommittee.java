@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
@@ -29,15 +30,15 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 JÃ¼rgen Bernard https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
  * @version 1.03
  */
-public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveLearning {
+public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
 
-	public VoteEntropyQueryByCommittee(List<IClassifier<Double, NumericalFeatureVector>> learningModels) {
+	public VoteEntropyQueryByCommittee(List<IClassifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
 
@@ -48,7 +49,7 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels)
+		for (IClassifier<O, FV> classifier : learningModels)
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -56,9 +57,9 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels)
+			for (IClassifier<O, FV> classifier : learningModels)
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
@@ -85,7 +86,7 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 
 			if (distributions != null && distributions.size() > 0) {
 				Map<String, Double> winningLabels = new HashMap();
-				for (IClassifier<Double, NumericalFeatureVector> classifier : learningModels) {
+				for (IClassifier<O, FV> classifier : learningModels) {
 					List<String> test = classifier.test(Arrays.asList(fv));
 					String label = classifier.test(Arrays.asList(fv)).get(0);
 					if (test != null && test.size() > 0)
@@ -104,7 +105,9 @@ public class VoteEntropyQueryByCommittee extends AbstractQueryByCommitteeActiveL
 				dist = 1;
 
 			// update ranking
-			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(1 - dist, fv));
+
+			ranking.add(new EntryWithComparableKey<Double, FV>(1 - dist, fv));
+
 			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 

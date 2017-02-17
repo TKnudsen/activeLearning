@@ -3,7 +3,8 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySamp
 import java.util.HashMap;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
@@ -19,16 +20,16 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 JÃ¼rgen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
  * @version 1.01
  */
-public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
+public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public SmallestMarginActiveLearning(IClassifier<Double, NumericalFeatureVector> learningModel) {
+	public SmallestMarginActiveLearning(IClassifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
@@ -43,9 +44,11 @@ public class SmallestMarginActiveLearning extends AbstractActiveLearningModel {
 		// learningModel.test(learningCandidateFeatureVectors);
 
 		// calculate overall score
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
+
+		for (FV fv : learningCandidateFeatureVectors) {
 			double margin = learningModel.getLabelProbabilityMargin(fv);
-			ranking.add(new EntryWithComparableKey<Double, NumericalFeatureVector>(margin, fv));
+			ranking.add(new EntryWithComparableKey<Double, FV>(margin, fv));
+
 			queryApplicabilities.put(fv, 1 - margin);
 			remainingUncertainty += (1 - margin);
 

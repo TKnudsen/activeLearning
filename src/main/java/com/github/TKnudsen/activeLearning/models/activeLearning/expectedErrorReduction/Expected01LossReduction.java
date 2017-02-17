@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeature;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
@@ -16,9 +16,9 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
 /**
  * @author Christian Ritter
  */
-public class Expected01LossReduction extends AbstractActiveLearningModel {
+public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public Expected01LossReduction(IClassifier<Double, NumericalFeatureVector> learningModel) {
+	public Expected01LossReduction(IClassifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
@@ -32,7 +32,7 @@ public class Expected01LossReduction extends AbstractActiveLearningModel {
 
 		int U = learningCandidateFeatureVectors.size();
 		List<Map<String, Double>> dists = new ArrayList<>();
-		for (NumericalFeatureVector fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			dists.add(learningModel.getLabelDistribution(fv));
 		}
 		Set<String> labels = new HashSet<>();
@@ -40,17 +40,18 @@ public class Expected01LossReduction extends AbstractActiveLearningModel {
 			labels.addAll(map.keySet());
 		}
 		for (int i = 0; i < U; i++) {
-			NumericalFeatureVector fv = learningCandidateFeatureVectors.get(i);
+			FV fv = learningCandidateFeatureVectors.get(i);
 			Map<String, Double> dist = dists.get(i);
 			double loss = 0;
 			for (String label : labels) {
-				List<NumericalFeatureVector> newTrainingSet = new ArrayList<>();
-				newTrainingSet.addAll(learningCandidateFeatureVectors);
-				// TODO is it ok to assign a label to the original feature
-				// vector assuming that the label is only input but not output?
-				fv.addFeature(new NumericalFeature("class", Double.valueOf(label)));
+				List<FV> newTrainingSet = new ArrayList<>();
+				for (FV fv1 : learningCandidateFeatureVectors) {
+					newTrainingSet.add((FV) fv1.getCopy());
+				}
+				fv = (FV) fv.getCopy();
+				fv.add("class", Double.valueOf(label));
 				newTrainingSet.add(fv);
-				IClassifier<Double, NumericalFeatureVector> newClassifier = null;
+				IClassifier<O, FV> newClassifier = null;
 				try {
 					// newClassifier = learningModel.getClass().newInstance();
 					newClassifier = learningModel.createParameterizedCopy();

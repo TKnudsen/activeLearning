@@ -5,40 +5,64 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+
+import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
 import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
 
-public abstract class AbstractActiveLearningModel implements IActiveLearningModelClassification<Double, NumericalFeatureVector>, ISelfDescription {
 
-	public AbstractActiveLearningModel(IClassifier<Double, NumericalFeatureVector> learningModel) {
-		this.learningModel = learningModel;
-	}
+public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>>
+		implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
 
-	protected List<NumericalFeatureVector> trainingFeatureVectors;
-	protected List<NumericalFeatureVector> learningCandidateFeatureVectors;
 
-	protected Ranking<EntryWithComparableKey<Double, NumericalFeatureVector>> ranking;
-	protected Map<NumericalFeatureVector, Double> queryApplicabilities;
+    protected List<FV> trainingFeatureVectors;
+    protected List<FV> learningCandidateFeatureVectors;
+    protected IClassifier<O, FV> learningModel;
+    public AbstractActiveLearningModel(IClassifier<O, FV> learningModel) {
+        this.learningModel = learningModel;
+    }
+
+
+
+	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
+	protected Map<FV, Double> queryApplicabilities;
+
 	protected Double remainingUncertainty;
 
-	protected IClassifier<Double, NumericalFeatureVector> learningModel;
+    @Override
+    public List<FV> suggestCandidates(int count) {
 
-	@Override
-	public List<NumericalFeatureVector> suggestCandidates(int count) {
-		if (ranking == null)
-			calculateRanking(count);
 
-		List<NumericalFeatureVector> fvs = new ArrayList<>();
-		for (int i = 0; i < ranking.size(); i++)
-			fvs.add(i, ranking.get(i).getValue());
+        if (ranking == null)
+            calculateRanking(count);
 
-		return fvs;
-	}
+        List<FV> fvs = new ArrayList<>();
+        for (int i = 0; i < ranking.size(); i++)
+            fvs.add(i, ranking.get(i).getValue());
+
+
+        return fvs;
+    }
 
 	protected abstract void calculateRanking(int count);
+
+	/**
+	 * information about training data is not necessarily relevant for AL
+	 * models. Nevertheless we provide the information for convenience reasons.
+	 * 
+	 * @return
+	 */
+	public List<FV> getTrainingData() {
+		return this.trainingFeatureVectors;
+	}
+
+	public Ranking<EntryWithComparableKey<Double, FV>> getRanking() {
+		return ranking;
+	}
 
 	/**
 	 * information about training data is not necessarily relevant for AL
@@ -55,16 +79,18 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	}
 
 	@Override
-	public void setTrainingData(List<NumericalFeatureVector> featureVectors) {
+	public void setTrainingData(List<FV> featureVectors) {
 		this.trainingFeatureVectors = featureVectors;
 	}
 
-	public List<NumericalFeatureVector> getLearningCandidates() {
+
+	public List<FV> getLearningCandidates() {
+
 		return this.learningCandidateFeatureVectors;
 	}
 
 	@Override
-	public void setLearningCandidates(List<NumericalFeatureVector> featureVectors) {
+	public void setLearningCandidates(List<FV> featureVectors) {
 		this.learningCandidateFeatureVectors = featureVectors;
 
 		ranking = null;
@@ -72,14 +98,15 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	}
 
 	@Override
-	public double getCandidateApplicabilityScore(NumericalFeatureVector featureVector) {
+	public double getCandidateApplicabilityScore(FV featureVector) {
+
 		if (queryApplicabilities != null)
 			return queryApplicabilities.get(featureVector);
 		return Double.NaN;
 	}
 
 	@Override
-	public void addCandidateVectorToTrainingVector(NumericalFeatureVector fv) {
+	public void addCandidateVectorToTrainingVector(FV fv) {
 		if (this.learningCandidateFeatureVectors.contains(fv)) {
 			this.learningCandidateFeatureVectors.remove(fv);
 			this.trainingFeatureVectors.add(fv);
@@ -96,7 +123,7 @@ public abstract class AbstractActiveLearningModel implements IActiveLearningMode
 	}
 
 	@Override
-	public ILearningModel<Double, NumericalFeatureVector, String> getLearningModel() {
+	public ILearningModel<O, FV, String> getLearningModel() {
 		return learningModel;
 	}
 }
