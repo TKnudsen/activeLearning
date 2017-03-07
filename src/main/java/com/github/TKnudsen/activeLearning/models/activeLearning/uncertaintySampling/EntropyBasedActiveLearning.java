@@ -19,7 +19,7 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 	@Override
 	protected void calculateRanking(int count) {
 		learningModel.test(learningCandidateFeatureVectors);
-		
+
 		ranking = new Ranking<>();
 		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
@@ -27,14 +27,14 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 		// calculate ranking based on entropy
 		for (FV fv : learningCandidateFeatureVectors) {
 			Map<String, Double> distribution = learningModel.getLabelDistribution(fv);
+//			System.out.println(distribution);
 
 			double entropy = calculateEntropy(distribution);
-			// System.out.println(entropy);
-
+//			System.out.println(entropy);
 
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - entropy, fv));
 
-			queryApplicabilities.put(fv, entropy);			
+			queryApplicabilities.put(fv, entropy);
 			remainingUncertainty += (entropy);
 
 			if (ranking.size() > count)
