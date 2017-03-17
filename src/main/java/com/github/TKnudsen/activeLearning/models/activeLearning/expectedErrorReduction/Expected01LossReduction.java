@@ -24,53 +24,61 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 
 	@Override
 	protected void calculateRanking(int count) {
-		ranking = new Ranking<>();
+		ranking = new Ranking();
 		remainingUncertainty = 0.0;
 
 		if (learningCandidateFeatureVectors.size() < 1)
 			return;
 
 		int U = learningCandidateFeatureVectors.size();
+
 		List<Map<String, Double>> dists = new ArrayList<>();
 		for (FV fv : learningCandidateFeatureVectors) {
 			dists.add(learningModel.getLabelDistribution(fv));
 		}
+
 		Set<String> labels = new HashSet<>();
 		for (Map<String, Double> map : dists) {
+			if (map == null)
+				continue;
 			labels.addAll(map.keySet());
 		}
+
 		for (int i = 0; i < U; i++) {
 			FV fv = learningCandidateFeatureVectors.get(i);
 			Map<String, Double> dist = dists.get(i);
+
 			double loss = 0;
-			for (String label : labels) {
-				List<FV> newTrainingSet = new ArrayList<>();
-				for (FV fv1 : learningCandidateFeatureVectors) {
-					newTrainingSet.add((FV) fv1.clone());
-				}
-				fv = (FV) fv.clone();
-				fv.add("class", Double.valueOf(label));
-				newTrainingSet.add(fv);
-				IClassifier<O, FV> newClassifier = null;
-				try {
-					// newClassifier = learningModel.getClass().newInstance();
-					newClassifier = learningModel.createParameterizedCopy();
-					newClassifier.train(newTrainingSet, "class");
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				double sum = 0;
-				for (int j = 0; j < U; j++) {
-					if (newClassifier == null)
-						break;
-					if (i != j) {
-						sum += 1 - newClassifier.getLabelProbabilityMax(learningCandidateFeatureVectors.get(j));
+			if (dist != null)
+				for (String label : labels) {
+					List<FV> newTrainingSet = new ArrayList<>();
+					for (FV fv1 : learningCandidateFeatureVectors) {
+						newTrainingSet.add((FV) fv1.clone());
 					}
+					fv = (FV) fv.clone();
+					fv.add("class", label);
+					newTrainingSet.add(fv);
+					IClassifier<O, FV> newClassifier = null;
+					try {
+						// newClassifier =
+						// learningModel.getClass().newInstance();
+						newClassifier = learningModel.createParameterizedCopy();
+						newClassifier.train(newTrainingSet, "class");
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					double sum = 0;
+					for (int j = 0; j < U; j++) {
+						if (newClassifier == null)
+							break;
+						if (i != j) {
+							sum += 1 - newClassifier.getLabelProbabilityMax(learningCandidateFeatureVectors.get(j));
+						}
+					}
+					loss += dist.get(label) * sum;
 				}
-				loss += dist.get(label) * sum;
-			}
 			ranking.add(new EntryWithComparableKey<>(loss, fv));
 			remainingUncertainty += loss;
 		}

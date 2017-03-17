@@ -28,6 +28,15 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	protected Double remainingUncertainty;
 
 	@Override
+	public FV suggestCandidate() {
+		List<FV> candidates = suggestCandidates(1);
+		if (candidates != null && candidates.size() > 0)
+			return candidates.get(0);
+
+		return null;
+	}
+
+	@Override
 	public List<FV> suggestCandidates(int count) {
 
 		if (ranking == null)
@@ -59,6 +68,9 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public void setTrainingData(List<FV> featureVectors) {
 		this.trainingFeatureVectors = featureVectors;
+
+		ranking = null;
+		queryApplicabilities = null;
 	}
 
 	public List<FV> getLearningCandidates() {
@@ -102,5 +114,10 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public ILearningModel<O, FV, String> getLearningModel() {
 		return learningModel;
+	}
+
+	@Override
+	public String toString() {
+		return this.getName() + " (" + this.learningModel.getName() + ")";
 	}
 }

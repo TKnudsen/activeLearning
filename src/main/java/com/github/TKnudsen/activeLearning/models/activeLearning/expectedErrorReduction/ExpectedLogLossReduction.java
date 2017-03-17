@@ -35,45 +35,51 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 		for (FV fv : learningCandidateFeatureVectors) {
 			dists.add(learningModel.getLabelDistribution(fv));
 		}
+
 		Set<String> labels = new HashSet<>();
 		for (Map<String, Double> map : dists) {
+			if (map == null)
+				continue;
 			labels.addAll(map.keySet());
 		}
+
 		for (int i = 0; i < U; i++) {
 			FV fv = learningCandidateFeatureVectors.get(i);
 			Map<String, Double> dist = dists.get(i);
+
 			double loss = 0;
-			for (String label : labels) {
-				List<FV> newTrainingSet = new ArrayList<>();
-				for (FV fv1 : learningCandidateFeatureVectors) {
-					newTrainingSet.add((FV) fv1.clone());
-				}
-				fv = (FV) fv.clone();
-				fv.add("class", Double.valueOf(label));
-				newTrainingSet.add(fv);
-				IClassifier<O, FV> newClassifier = null;
-				try {
-					newClassifier = learningModel.createParameterizedCopy();
-					newClassifier.train(newTrainingSet, "class");
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				double sum = 0;
-				for (int j = 0; j < U; j++) {
-					if (newClassifier == null)
-						break;
-					if (i != j) {
-						Map<String, Double> d = newClassifier.getLabelDistribution(learningCandidateFeatureVectors.get(j));
-						for (String l : d.keySet()) {
-							sum += d.get(l) * Math.log(d.get(l));
+			if (dist != null)
+				for (String label : labels) {
+					List<FV> newTrainingSet = new ArrayList<>();
+					for (FV fv1 : learningCandidateFeatureVectors) {
+						newTrainingSet.add((FV) fv1.clone());
+					}
+					fv = (FV) fv.clone();
+					fv.add("class", label);
+					newTrainingSet.add(fv);
+					IClassifier<O, FV> newClassifier = null;
+					try {
+						newClassifier = learningModel.createParameterizedCopy();
+						newClassifier.train(newTrainingSet, "class");
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					double sum = 0;
+					for (int j = 0; j < U; j++) {
+						if (newClassifier == null)
+							break;
+						if (i != j) {
+							Map<String, Double> d = newClassifier.getLabelDistribution(learningCandidateFeatureVectors.get(j));
+							for (String l : d.keySet()) {
+								sum += d.get(l) * Math.log(d.get(l));
+							}
 						}
 					}
+					sum *= -1;
+					loss += dist.get(label) * sum;
 				}
-				sum *= -1;
-				loss += dist.get(label) * sum;
-			}
 			ranking.add(new EntryWithComparableKey<>(loss, fv));
 			remainingUncertainty += loss;
 		}

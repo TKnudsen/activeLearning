@@ -14,7 +14,7 @@ public class ClassificationAccuracy implements INumericalFeaturesVectorModelEval
 
 		List<String> test = model.test(testData);
 		if (test == null || test.size() == 0)
-			return 0.0;
+			return Double.NaN;
 
 		for (int i = 0; i < testData.size(); i++) {
 			if (testData.get(i) != null && testData.get(i).getAttribute(targetVariable) != null) {
