@@ -30,7 +30,8 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 Jürgen Bernard
+ * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
@@ -53,7 +54,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
-		queryApplicabilities = new HashMap<>(); 
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -88,12 +89,13 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 				Map<String, Double> winningLabels = new HashMap();
 				for (IClassifier<O, FV> classifier : learningModels) {
 					List<String> test = classifier.test(Arrays.asList(fv));
-					String label = classifier.test(Arrays.asList(fv)).get(0);
-					if (test != null && test.size() > 0)
+					if (test != null && test.size() > 0) {
+						String label = classifier.test(Arrays.asList(fv)).get(0);
 						if (!winningLabels.containsKey(label))
 							winningLabels.put(label, 1.0);
 						else
 							winningLabels.put(label, winningLabels.get(label) + 1.0);
+					}
 				}
 
 				for (String label : winningLabels.keySet())
@@ -118,7 +120,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("VoteEntropyQueryByCommittee: remaining uncertainty = " + remainingUncertainty);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Vote Entropy QBC";
