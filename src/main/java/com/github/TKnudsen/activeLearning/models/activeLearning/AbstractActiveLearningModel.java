@@ -43,7 +43,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 			calculateRanking(count);
 
 		List<FV> fvs = new ArrayList<>();
-		for (int i = 0; i < ranking.size(); i++)
+		for (int i = 0; i < count; i++)
 			fvs.add(i, ranking.get(i).getValue());
 
 		return fvs;
