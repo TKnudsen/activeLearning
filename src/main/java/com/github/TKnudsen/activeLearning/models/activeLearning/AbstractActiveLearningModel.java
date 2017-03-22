@@ -39,7 +39,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public List<FV> suggestCandidates(int count) {
 
-		if (ranking == null)
+		if (ranking == null || count > ranking.size())
 			calculateRanking(count);
 
 		List<FV> fvs = new ArrayList<>();
@@ -96,14 +96,14 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	@Override
 	public void addCandidateVectorToTrainingVector(FV fv) {
+		ranking = null;
+		queryApplicabilities = null;
+
 		if (this.learningCandidateFeatureVectors.contains(fv)) {
 			this.learningCandidateFeatureVectors.remove(fv);
 			this.trainingFeatureVectors.add(fv);
 		} else
 			throw new IllegalArgumentException("EvaluationBench.addCandidateVectorToTrainingVector: no such candidate vector.");
-
-		ranking = null;
-		queryApplicabilities = null;
 	}
 
 	@Override
