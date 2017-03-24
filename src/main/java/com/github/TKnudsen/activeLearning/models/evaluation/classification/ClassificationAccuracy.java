@@ -16,6 +16,9 @@ public class ClassificationAccuracy implements INumericalFeaturesVectorModelEval
 		if (test == null || test.size() == 0)
 			return Double.NaN;
 
+		if (test.size() != testData.size())
+			throw new IllegalArgumentException("input size != output size");
+
 		for (int i = 0; i < testData.size(); i++) {
 			if (testData.get(i) != null && testData.get(i).getAttribute(targetVariable) != null) {
 				String label = testData.get(i).getAttribute(targetVariable).toString();
