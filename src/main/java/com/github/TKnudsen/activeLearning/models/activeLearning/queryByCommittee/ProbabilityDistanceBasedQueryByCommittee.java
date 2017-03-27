@@ -28,7 +28,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 JÃ¼rgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
