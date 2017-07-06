@@ -11,14 +11,17 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.ClassifierTools;
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.WekaClassifierWrapper;
 
 /**
  * @author Christian Ritter
  */
 public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public ExpectedLogLossReduction(IClassifier<O, FV> learningModel) {
+	public ExpectedLogLossReduction(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
@@ -57,10 +60,13 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 					fv = (FV) fv.clone();
 					fv.add("class", label);
 					newTrainingSet.add(fv);
-					IClassifier<O, FV> newClassifier = null;
+					Classifier<O, FV> newClassifier = null;
 					try {
-						newClassifier = learningModel.createParameterizedCopy();
-						newClassifier.train(newTrainingSet, "class");
+						if (learningModel instanceof WekaClassifierWrapper) {
+							newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) learningModel);
+							newClassifier.train(newTrainingSet, "class");
+						} else
+							throw new InstantiationException();
 					} catch (InstantiationException | IllegalAccessException e) {
 						e.printStackTrace();
 					} catch (Exception e) {

@@ -8,11 +8,12 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public EntropyBasedActiveLearning(IClassifier<O, FV> learningModel) {
+	public EntropyBasedActiveLearning(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
@@ -27,10 +28,10 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 		// calculate ranking based on entropy
 		for (FV fv : learningCandidateFeatureVectors) {
 			Map<String, Double> distribution = learningModel.getLabelDistribution(fv);
-//			System.out.println(distribution);
+			// System.out.println(distribution);
 
 			double entropy = calculateEntropy(distribution);
-//			System.out.println(entropy);
+			// System.out.println(entropy);
 
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - entropy, fv));
 

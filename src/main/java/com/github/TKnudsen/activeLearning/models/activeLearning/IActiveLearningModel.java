@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
-import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 
 /**
  * <p>
@@ -36,11 +37,6 @@ public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? ex
 
 	public List<X> suggestCandidates(int count);
 
-	/**
-	 * TODO really essential?!!
-	 * 
-	 * @return
-	 */
 	public ILearningModel<O, X, Y> getLearningModel();
 
 	public double getRemainingUncertainty();

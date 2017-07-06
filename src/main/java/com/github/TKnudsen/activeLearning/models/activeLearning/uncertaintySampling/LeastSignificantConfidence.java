@@ -7,7 +7,8 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  */
 public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	public LeastSignificantConfidence(IClassifier<O, FV> learningModel) {
+	public LeastSignificantConfidence(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 

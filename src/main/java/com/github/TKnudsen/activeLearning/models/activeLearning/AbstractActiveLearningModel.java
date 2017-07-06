@@ -9,16 +9,17 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.activeLearning.models.learning.ILearningModel;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
 
 	protected List<FV> trainingFeatureVectors;
 	protected List<FV> learningCandidateFeatureVectors;
-	protected IClassifier<O, FV> learningModel;
+	protected Classifier<O, FV> learningModel;
 
-	public AbstractActiveLearningModel(IClassifier<O, FV> learningModel) {
+	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
 		this.learningModel = learningModel;
 	}
 

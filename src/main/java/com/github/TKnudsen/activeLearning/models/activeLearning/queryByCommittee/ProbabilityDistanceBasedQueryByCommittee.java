@@ -11,7 +11,8 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>
@@ -36,7 +37,7 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  */
 public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
 
-	public ProbabilityDistanceBasedQueryByCommittee(List<IClassifier<O, FV>> learningModels) {
+	public ProbabilityDistanceBasedQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
 
@@ -47,7 +48,7 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (IClassifier<O, FV> classifier : learningModels)
+		for (Classifier<O, FV> classifier : learningModels)
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -57,7 +58,7 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (IClassifier<O, FV> classifier : learningModels)
+			for (Classifier<O, FV> classifier : learningModels)
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays

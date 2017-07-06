@@ -11,7 +11,8 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.activeLearning.models.learning.classification.IClassifier;
+
+import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>
@@ -29,7 +30,8 @@ import com.github.TKnudsen.activeLearning.models.learning.classification.IClassi
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 Jürgen Bernard
+ * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
@@ -42,7 +44,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 
 	private boolean normalizeAlphabetLength = true;
 
-	public KullbackLeiblerQueryByCommittee(List<IClassifier<O, FV>> learningModels) {
+	public KullbackLeiblerQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
 
@@ -53,7 +55,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (IClassifier<O, FV> classifier : learningModels)
+		for (Classifier<O, FV> classifier : learningModels)
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -63,7 +65,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (IClassifier<O, FV> classifier : learningModels)
+			for (Classifier<O, FV> classifier : learningModels)
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
