@@ -39,6 +39,11 @@
 			<artifactId>nd-tuples</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+  <groupId>com.github.tknudsen</groupId>
+  <artifactId>complex-data-object</artifactId>
+  <version>0.1.9</version>
+</dependency>
 	</dependencies>
 	
 	<build>
