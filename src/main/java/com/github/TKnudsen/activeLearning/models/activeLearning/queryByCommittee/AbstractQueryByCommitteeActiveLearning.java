@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-
-import main.java.com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
-import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>

@@ -9,9 +9,8 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.tools.DataConversion;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-
-import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 

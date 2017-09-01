@@ -6,9 +6,8 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-
-import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>
@@ -21,7 +20,7 @@ import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classif
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 

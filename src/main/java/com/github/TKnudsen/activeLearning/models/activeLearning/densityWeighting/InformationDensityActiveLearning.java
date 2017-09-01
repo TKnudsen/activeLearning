@@ -9,9 +9,8 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.features.FeatureType;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-
-import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * For more information see: An Analysis of Active Learning Strategies for

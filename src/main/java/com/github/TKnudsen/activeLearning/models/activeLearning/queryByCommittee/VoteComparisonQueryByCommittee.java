@@ -12,8 +12,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-
-import main.java.com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
  * <p>
