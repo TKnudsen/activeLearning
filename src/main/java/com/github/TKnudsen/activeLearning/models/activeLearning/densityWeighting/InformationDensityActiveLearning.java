@@ -20,23 +20,25 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  */
 public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	private AbstractActiveLearningModel baseModel;
+	private AbstractActiveLearningModel<O, FV> baseModel;
 	// keeping the density map can save time later
 	private Map<FV, Double> density;
-	private double beta = 1.0;
+	// private double beta = 1.0; unused
 
-	public InformationDensityActiveLearning(Classifier<O, FV> learningModel, AbstractActiveLearningModel baseModel) {
+	public InformationDensityActiveLearning(Classifier<O, FV> learningModel, AbstractActiveLearningModel<O, FV> baseModel) {
 		super(learningModel);
 		this.baseModel = baseModel;
 	}
+	
+	// beta is unused
+	// public InformationDensityActiveLearning(Classifier<O, FV> learningModel,
+	// double beta, AbstractActiveLearningModel<O, FV> baseModel) {
+	// super(learningModel);
+	// this.beta = beta;
+	// this.baseModel = baseModel;
+	// }
 
-	public InformationDensityActiveLearning(Classifier<O, FV> learningModel, double beta, AbstractActiveLearningModel baseModel) {
-		super(learningModel);
-		this.beta = beta;
-		this.baseModel = baseModel;
-	}
-
-	public void setBaseModel(AbstractActiveLearningModel baseModel) {
+	public void setBaseModel(AbstractActiveLearningModel<O, FV> baseModel) {
 		this.baseModel = baseModel;
 	}
 

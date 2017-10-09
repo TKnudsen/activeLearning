@@ -115,6 +115,12 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	public ILearningModel<O, FV, String> getLearningModel() {
 		return learningModel;
 	}
+	
+	
+
+	public void setLearningModel(Classifier<O, FV> learningModel) {
+		this.learningModel = learningModel;
+	}
 
 	@Override
 	public String toString() {
