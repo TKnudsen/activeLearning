@@ -18,9 +18,10 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	protected List<FV> learningCandidateFeatureVectors;
 	protected Classifier<O, FV> learningModel;
 
-	protected AbstractActiveLearningModel() {
+	protected AbstractActiveLearningModel(){
+		
 	}
-
+	
 	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
 		this.learningModel = learningModel;
 	}
@@ -42,9 +43,9 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public List<FV> suggestCandidates(int count) {
 
-		if (ranking == null || count > ranking.size()) {
-			learningModel.train(trainingFeatureVectors, "class");
+		if (ranking == null || count > ranking.size()){
 			calculateRanking(count);
+			learningModel.train(trainingFeatureVectors, "class");	
 		}
 
 		List<FV> fvs = new ArrayList<>();
