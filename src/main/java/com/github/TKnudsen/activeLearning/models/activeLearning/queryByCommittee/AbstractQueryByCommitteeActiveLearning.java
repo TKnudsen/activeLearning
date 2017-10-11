@@ -32,8 +32,10 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @version 1.02
  */
 public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
-
 	protected List<Classifier<O, FV>> learningModels;
+
+	protected AbstractQueryByCommitteeActiveLearning() {
+	}
 
 	public AbstractQueryByCommitteeActiveLearning(List<Classifier<O, FV>> learningModels) {
 		super(learningModels.get(0));

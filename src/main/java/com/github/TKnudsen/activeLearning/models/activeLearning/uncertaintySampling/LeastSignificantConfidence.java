@@ -28,6 +28,8 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @version 1.01
  */
 public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+	protected LeastSignificantConfidence() {
+	}
 
 	public LeastSignificantConfidence(Classifier<O, FV> learningModel) {
 		super(learningModel);

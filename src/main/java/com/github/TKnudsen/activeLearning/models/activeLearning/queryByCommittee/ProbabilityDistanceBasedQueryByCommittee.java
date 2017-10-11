@@ -35,7 +35,9 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * @version 1.03
  */
 public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
-
+	protected ProbabilityDistanceBasedQueryByCommittee() {
+	}
+	
 	public ProbabilityDistanceBasedQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}

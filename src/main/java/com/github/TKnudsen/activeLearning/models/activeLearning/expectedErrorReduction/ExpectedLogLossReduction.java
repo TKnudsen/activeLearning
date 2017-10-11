@@ -19,6 +19,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @author Christian Ritter
  */
 public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+	
+	protected ExpectedLogLossReduction() {
+	}
 
 	public ExpectedLogLossReduction(Classifier<O, FV> learningModel) {
 		super(learningModel);

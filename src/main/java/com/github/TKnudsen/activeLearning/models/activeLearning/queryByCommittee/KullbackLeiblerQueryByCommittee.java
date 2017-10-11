@@ -43,6 +43,9 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 
 	private boolean normalizeAlphabetLength = true;
 
+	protected KullbackLeiblerQueryByCommittee() {
+	}
+
 	public KullbackLeiblerQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}

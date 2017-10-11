@@ -13,6 +13,8 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 
 public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+	protected SimpsonsDiversityActiveLearningModel() {
+	}
 
 	public SimpsonsDiversityActiveLearningModel(Classifier<O, FV> learningModel) {
 		super(learningModel);

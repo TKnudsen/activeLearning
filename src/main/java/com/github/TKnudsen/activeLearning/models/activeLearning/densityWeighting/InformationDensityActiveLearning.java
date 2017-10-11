@@ -25,6 +25,10 @@ public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVecto
 	private Map<FV, Double> density;
 	// private double beta = 1.0; unused
 
+	protected InformationDensityActiveLearning(){
+		
+	}
+	
 	public InformationDensityActiveLearning(Classifier<O, FV> learningModel, AbstractActiveLearningModel<O, FV> baseModel) {
 		super(learningModel);
 		this.baseModel = baseModel;

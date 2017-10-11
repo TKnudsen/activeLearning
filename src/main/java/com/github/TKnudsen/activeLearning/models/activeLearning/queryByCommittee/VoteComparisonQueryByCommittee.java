@@ -36,7 +36,9 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * @version 1.03
  */
 public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
-
+	protected VoteComparisonQueryByCommittee() {
+	}
+	
 	public VoteComparisonQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}

@@ -20,6 +20,11 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  */
 public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
+	
+	protected Expected01LossReduction() {
+	}
+	
+	
 	public Expected01LossReduction(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}

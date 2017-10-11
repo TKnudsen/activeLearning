@@ -38,7 +38,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampl
  * @version 1.03
  */
 public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
-
+	protected VoteEntropyQueryByCommittee() {
+	}
+	
 	public VoteEntropyQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
