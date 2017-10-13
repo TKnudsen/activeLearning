@@ -45,7 +45,6 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 		if (ranking == null || count > ranking.size()){
 			calculateRanking(count);
-			learningModel.train(trainingFeatureVectors, "class");	
 		}
 
 		List<FV> fvs = new ArrayList<>();
