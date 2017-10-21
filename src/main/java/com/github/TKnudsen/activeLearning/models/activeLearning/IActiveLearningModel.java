@@ -12,8 +12,10 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * </p>
  * 
  * <p>
- * Description: algorithmic model that estimates the coverage of the feature
- * space with respect to already labeled features.
+ * Description: active learners suggest unlabeled instances to oracles (i.e.,
+ * users) in a way that a given learning model (e.g., a classifier) is supposed
+ * to improce its quality in a "best" way. Formalization of "best" depends on
+ * the particular implementation.
  * </p>
  * 
  * <p>
@@ -22,30 +24,11 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.05
  */
 public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>, Y> {
 
-	@Deprecated
-	/**
-	 * There is doubt to leave it out. Training data is supposed to be out of
-	 * scope for an active learner.
-	 * 
-	 * @param featureVectors
-	 */
-	public void setTrainingData(List<X> featureVectors);
-
 	public void setLearningCandidates(List<X> featureVectors);
-
-	@Deprecated
-	/**
-	 * There is doubt to leave it out. Training data is supposed to be out of
-	 * scope for an active learner. Why should this be orchestrated in an active
-	 * learner? Seems to yield overhead.
-	 * 
-	 * @param featureVectors
-	 */
-	public void addCandidateVectorToTrainingVector(X fv);
 
 	public X suggestCandidate();
 

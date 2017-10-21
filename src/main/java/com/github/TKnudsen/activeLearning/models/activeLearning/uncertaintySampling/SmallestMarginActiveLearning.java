@@ -1,6 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
@@ -48,7 +49,8 @@ public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O,
 		// calculate overall score
 
 		for (FV fv : learningCandidateFeatureVectors) {
-			double margin = learningModel.getLabelProbabilityMargin(fv);
+			// double margin = learningModel.getLabelProbabilityMargin(fv);
+			double margin = calculateMargin(fv);
 			ranking.add(new EntryWithComparableKey<Double, FV>(margin, fv));
 
 			queryApplicabilities.put(fv, 1 - margin);
@@ -60,6 +62,24 @@ public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O,
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("SmallestMarginActiveLearning: remaining uncertainty = " + remainingUncertainty);
+	}
+
+	private double calculateMargin(FV fv) {
+		Map<String, Double> probabilities = learningModel.getLabelDistribution(fv);
+
+		if (probabilities == null)
+			return 0;
+
+		double max = Double.MIN_VALUE;
+		double second = Double.MIN_VALUE;
+		for (double value : probabilities.values())
+			if (max <= value) {
+				second = max;
+				max = value;
+			} else if (second <= value)
+				second = value;
+
+		return max - second;
 	}
 
 	@Override

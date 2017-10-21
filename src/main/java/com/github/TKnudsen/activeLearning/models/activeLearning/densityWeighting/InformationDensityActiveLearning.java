@@ -73,7 +73,7 @@ public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVecto
 				density.put(learningCandidateFeatureVectors.get(i), sim);
 			}
 		}
-		baseModel.setTrainingData(this.trainingFeatureVectors);
+//		baseModel.setTrainingData(this.trainingFeatureVectors);
 		baseModel.setLearningCandidates(this.learningCandidateFeatureVectors);
 		baseModel.suggestCandidates(U);
 

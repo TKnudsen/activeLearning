@@ -10,6 +10,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.tools.MathFunctions;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.ClassifierTools;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.WekaClassifierWrapper;
@@ -20,11 +21,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  */
 public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	
 	protected Expected01LossReduction() {
 	}
-	
-	
+
 	public Expected01LossReduction(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
@@ -82,7 +81,7 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 						if (newClassifier == null)
 							break;
 						if (i != j) {
-							sum += 1 - newClassifier.getLabelProbabilityMax(learningCandidateFeatureVectors.get(j));
+							sum += 1 - calculateMaxProbability(newClassifier.getLabelDistribution(learningCandidateFeatureVectors.get(j)));
 						}
 					}
 					loss += dist.get(label) * sum;
@@ -92,6 +91,14 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 		}
 		remainingUncertainty /= U;
 		System.out.println("Expected01LossReduction: remaining uncertainty = " + remainingUncertainty);
+	}
+
+	private double calculateMaxProbability(Map<String, Double> labelDistribution) {
+		if (labelDistribution == null)
+			return 0;
+
+		Double[] array = labelDistribution.values().toArray(new Double[0]);
+		return MathFunctions.getMax(array);
 	}
 
 	@Override

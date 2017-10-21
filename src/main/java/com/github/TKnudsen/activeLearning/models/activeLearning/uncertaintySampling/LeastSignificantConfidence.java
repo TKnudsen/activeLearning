@@ -1,11 +1,13 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.tools.MathFunctions;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 
@@ -43,11 +45,10 @@ public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ?
 		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
-		learningModel.test(learningCandidateFeatureVectors);
-
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
-			double likelihood = learningModel.getLabelProbabilityMax(fv);
+			// double likelihood = learningModel.getLabelProbabilityMax(fv);
+			double likelihood = calculateMaxProbability(fv);
 			ranking.add(new EntryWithComparableKey<Double, FV>(likelihood, fv));
 			queryApplicabilities.put(fv, 1 - likelihood);
 			remainingUncertainty += (1 - likelihood);
@@ -58,6 +59,15 @@ public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ?
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("LastSignificantConfidence: remaining uncertainty = " + remainingUncertainty);
+	}
+
+	private double calculateMaxProbability(FV fv) {
+		Map<String, Double> labelDistribution = learningModel.getLabelDistribution(fv);
+		if (labelDistribution == null)
+			return 0;
+
+		Double[] array = labelDistribution.values().toArray(new Double[0]);
+		return MathFunctions.getMax(array);
 	}
 
 	@Override

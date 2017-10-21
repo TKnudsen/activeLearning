@@ -14,14 +14,14 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
 
-	protected List<FV> trainingFeatureVectors;
 	protected List<FV> learningCandidateFeatureVectors;
+	
 	protected Classifier<O, FV> learningModel;
 
-	protected AbstractActiveLearningModel(){
-		
+	protected AbstractActiveLearningModel() {
+
 	}
-	
+
 	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
 		this.learningModel = learningModel;
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public List<FV> suggestCandidates(int count) {
 
-		if (ranking == null || count > ranking.size()){
+		if (ranking == null || count > ranking.size()) {
 			calculateRanking(count);
 		}
 
@@ -56,26 +56,8 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	protected abstract void calculateRanking(int count);
 
-	/**
-	 * information about training data is not necessarily relevant for AL
-	 * models. Nevertheless we provide the information for convenience reasons.
-	 * 
-	 * @return
-	 */
-	public List<FV> getTrainingData() {
-		return this.trainingFeatureVectors;
-	}
-
 	public Ranking<EntryWithComparableKey<Double, FV>> getRanking() {
 		return ranking;
-	}
-
-	@Override
-	public void setTrainingData(List<FV> featureVectors) {
-		this.trainingFeatureVectors = featureVectors;
-
-		ranking = null;
-		queryApplicabilities = null;
 	}
 
 	public List<FV> getLearningCandidates() {
@@ -97,18 +79,6 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 		if (queryApplicabilities != null)
 			return queryApplicabilities.get(featureVector);
 		return Double.NaN;
-	}
-
-	@Override
-	public void addCandidateVectorToTrainingVector(FV fv) {
-		ranking = null;
-		queryApplicabilities = null;
-
-		if (this.learningCandidateFeatureVectors.contains(fv)) {
-			this.learningCandidateFeatureVectors.remove(fv);
-			this.trainingFeatureVectors.add(fv);
-		} else
-			throw new IllegalArgumentException("EvaluationBench.addCandidateVectorToTrainingVector: no such candidate vector.");
 	}
 
 	@Override
