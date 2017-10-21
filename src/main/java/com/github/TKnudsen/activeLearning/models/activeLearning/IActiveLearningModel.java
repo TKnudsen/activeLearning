@@ -26,10 +26,25 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  */
 public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>, Y> {
 
+	@Deprecated
+	/**
+	 * There is doubt to leave it out. Training data is supposed to be out of
+	 * scope for an active learner.
+	 * 
+	 * @param featureVectors
+	 */
 	public void setTrainingData(List<X> featureVectors);
 
 	public void setLearningCandidates(List<X> featureVectors);
 
+	@Deprecated
+	/**
+	 * There is doubt to leave it out. Training data is supposed to be out of
+	 * scope for an active learner. Why should this be orchestrated in an active
+	 * learner? Seems to yield overhead.
+	 * 
+	 * @param featureVectors
+	 */
 	public void addCandidateVectorToTrainingVector(X fv);
 
 	public X suggestCandidate();
