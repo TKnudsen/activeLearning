@@ -15,8 +15,13 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
 
 	protected List<FV> learningCandidateFeatureVectors;
-	
+
 	protected Classifier<O, FV> learningModel;
+
+	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
+	protected Map<FV, Double> queryApplicabilities;
+
+	protected Double remainingUncertainty;
 
 	protected AbstractActiveLearningModel() {
 
@@ -25,11 +30,6 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
 		this.learningModel = learningModel;
 	}
-
-	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
-	protected Map<FV, Double> queryApplicabilities;
-
-	protected Double remainingUncertainty;
 
 	@Override
 	public FV suggestCandidate() {

@@ -72,12 +72,12 @@ public class LeastSignificantConfidence<O, FV extends AbstractFeatureVector<O, ?
 
 	@Override
 	public String getName() {
-		return "Last Significant Confidence";
+		return "Least Significant Confidence";
 	}
 
 	@Override
 	public String getDescription() {
-		return getName();
+		return "Focus on instances with weakest winning labels.";
 	}
 
 }
