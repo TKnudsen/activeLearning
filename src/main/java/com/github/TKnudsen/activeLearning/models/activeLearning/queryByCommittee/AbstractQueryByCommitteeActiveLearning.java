@@ -32,7 +32,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @version 1.02
  */
 public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
-	protected List<Classifier<O, FV>> learningModels;
+	private List<Classifier<O, FV>> learningModels;
 
 	protected AbstractQueryByCommitteeActiveLearning() {
 	}
@@ -50,5 +50,13 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 			return learningModels.get(0);
 
 		return null;
+	}
+
+	public List<Classifier<O, FV>> getLearningModels() {
+		return learningModels;
+	}
+
+	public void setLearningModels(List<Classifier<O, FV>> learningModels) {
+		this.learningModels = learningModels;
 	}
 }

@@ -52,7 +52,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (Classifier<O, FV> classifier : learningModels)
+		for (Classifier<O, FV> classifier : getLearningModels())
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -62,7 +62,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : learningModels)
+			for (Classifier<O, FV> classifier : getLearningModels())
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
@@ -89,7 +89,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 			if (distributions != null && distributions.size() > 0) {
 				Map<String, Double> winningLabels = new HashMap();
-				for (Classifier<O, FV> classifier : learningModels) {
+				for (Classifier<O, FV> classifier : getLearningModels()) {
 					List<String> test = classifier.test(Arrays.asList(fv));
 					if (test != null && test.size() > 0) {
 						String label = classifier.test(Arrays.asList(fv)).get(0);
@@ -101,7 +101,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 				}
 
 				for (String label : winningLabels.keySet())
-					winningLabels.put(label, winningLabels.get(label) / (double) learningModels.size());
+					winningLabels.put(label, winningLabels.get(label) / (double) getLearningModels().size());
 
 				dist = EntropyBasedActiveLearning.calculateEntropy(winningLabels);
 			} else

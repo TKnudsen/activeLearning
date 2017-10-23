@@ -50,7 +50,7 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (Classifier<O, FV> classifier : learningModels)
+		for (Classifier<O, FV> classifier : getLearningModels())
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -60,7 +60,7 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : learningModels)
+			for (Classifier<O, FV> classifier : getLearningModels())
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
@@ -87,7 +87,7 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 
 			if (distributions != null && distributions.size() > 0) {
 				Set<String> winningLabels = new HashSet<>();
-				for (Classifier<O, FV> classifier : learningModels) {
+				for (Classifier<O, FV> classifier : getLearningModels()) {
 					List<String> test = classifier.test(Arrays.asList(fv));
 					if (test != null && test.size() > 0)
 						winningLabels.add(classifier.test(Arrays.asList(fv)).get(0));

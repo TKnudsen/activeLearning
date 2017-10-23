@@ -57,7 +57,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (Classifier<O, FV> classifier : learningModels)
+		for (Classifier<O, FV> classifier : getLearningModels())
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -67,7 +67,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : learningModels)
+			for (Classifier<O, FV> classifier : getLearningModels())
 				labelDistributions.add(classifier.getLabelDistribution(fv));
 
 			// create unified distribution arrays
