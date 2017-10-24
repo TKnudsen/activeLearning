@@ -61,7 +61,6 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	}
 
 	public List<FV> getLearningCandidates() {
-
 		return this.learningCandidateFeatureVectors;
 	}
 
