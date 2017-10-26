@@ -14,7 +14,7 @@ import com.github.TKnudsen.activeLearning.data.objectFeedback.IObjectFeedback;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 

@@ -24,7 +24,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * <p>
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  *

@@ -28,7 +28,7 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 Juergen Bernard https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard

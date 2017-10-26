@@ -19,7 +19,7 @@ import com.github.TKnudsen.activeLearning.models.objectFeedbackInterpreter.IFeed
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 

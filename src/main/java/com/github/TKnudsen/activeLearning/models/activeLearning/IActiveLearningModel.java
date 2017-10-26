@@ -19,7 +19,7 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016-2017 Jürgen Bernard,
+ * Copyright: (c) 2016-2017 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 

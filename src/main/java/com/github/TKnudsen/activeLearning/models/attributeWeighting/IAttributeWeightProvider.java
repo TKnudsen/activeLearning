@@ -10,7 +10,7 @@ package com.github.TKnudsen.activeLearning.models.attributeWeighting;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Jürgen Bernard,
+ * Copyright: (c) 2016 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
