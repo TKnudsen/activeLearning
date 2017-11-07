@@ -1,6 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,16 +69,32 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	public void setLearningCandidates(List<FV> featureVectors) {
 		this.learningCandidateFeatureVectors = featureVectors;
 
+		clearResults();
+	}
+
+	public void clearResults() {
 		ranking = null;
 		queryApplicabilities = null;
 	}
 
 	@Override
 	public double getCandidateApplicabilityScore(FV featureVector) {
-
 		if (queryApplicabilities != null)
 			return queryApplicabilities.get(featureVector);
+
 		return Double.NaN;
+	}
+
+	/**
+	 * copy of the applicability scores. high means applicable for AL.
+	 * 
+	 * @return
+	 */
+	public Map<FV, Double> getCandidateScores() {
+		if (queryApplicabilities != null)
+			return new LinkedHashMap<>(queryApplicabilities);
+
+		return null;
 	}
 
 	@Override
