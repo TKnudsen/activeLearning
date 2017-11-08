@@ -40,10 +40,12 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampl
 public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
 	protected VoteEntropyQueryByCommittee() {
 	}
-	
+
 	public VoteEntropyQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
+
+	// TODO add constructor with IProbabilisticClassificationResultSupplier
 
 	@Override
 	public String getComparisonMethod() {

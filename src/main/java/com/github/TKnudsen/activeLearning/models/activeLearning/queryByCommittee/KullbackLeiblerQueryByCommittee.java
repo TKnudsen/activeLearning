@@ -11,6 +11,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
@@ -49,6 +50,8 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 	public KullbackLeiblerQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
+	
+	// TODO add constructor with IProbabilisticClassificationResultSupplier
 
 	@Override
 	public String getComparisonMethod() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
@@ -24,22 +25,33 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * <p>
  * <p>
- * Copyright: (c) 2016 Juergen Bernard,
+ * Copyright: (c) 2016-2017 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  *
  * @author Juergen Bernard
- * @version 1.02
+ * @version 1.03
  */
 public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+
+	@Deprecated
 	private List<Classifier<O, FV>> learningModels;
+
+	private List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers;
 
 	protected AbstractQueryByCommitteeActiveLearning() {
 	}
 
+	@Deprecated
 	public AbstractQueryByCommitteeActiveLearning(List<Classifier<O, FV>> learningModels) {
 		super(learningModels.get(0));
 		this.learningModels = learningModels;
+	}
+
+	public AbstractQueryByCommitteeActiveLearning(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+		super(classificationResultSuppliers.get(0));
+
+		this.classificationResultSuppliers = classificationResultSuppliers;
 	}
 
 	public abstract String getComparisonMethod();
@@ -52,11 +64,21 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 		return null;
 	}
 
+	@Deprecated
 	public List<Classifier<O, FV>> getLearningModels() {
 		return learningModels;
 	}
 
+	@Deprecated
 	public void setLearningModels(List<Classifier<O, FV>> learningModels) {
 		this.learningModels = learningModels;
+	}
+
+	public List<IProbabilisticClassificationResultSupplier<FV>> getClassificationResultSuppliers() {
+		return classificationResultSuppliers;
+	}
+
+	public void setClassificationResultSuppliers(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers) {
+		this.classificationResultSuppliers = classificationResultSuppliers;
 	}
 }

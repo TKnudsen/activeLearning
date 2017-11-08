@@ -10,6 +10,7 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
@@ -17,7 +18,9 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	protected List<FV> learningCandidateFeatureVectors;
 
+	@Deprecated
 	protected Classifier<O, FV> learningModel;
+	private IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier;
 
 	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
 	protected Map<FV, Double> queryApplicabilities;
@@ -28,8 +31,13 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	}
 
+	@Deprecated
 	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
 		this.learningModel = learningModel;
+	}
+
+	public AbstractActiveLearningModel(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+		this.classificationResultSupplier = classificationResultSupplier;
 	}
 
 	@Override
@@ -114,5 +122,14 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	@Override
 	public String toString() {
 		return this.getName() + " (" + this.learningModel.getName() + ")";
+	}
+
+	@Override
+	public IProbabilisticClassificationResultSupplier<FV> getClassificationResultSupplier() {
+		return classificationResultSupplier;
+	}
+
+	public void setClassificationResultSupplier(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+		this.classificationResultSupplier = classificationResultSupplier;
 	}
 }

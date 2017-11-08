@@ -7,6 +7,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 
@@ -21,35 +22,37 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard,
+ * Copyright: (c) 2016-2017 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.01
+ * @version 1.02
  */
 public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 	protected SmallestMarginActiveLearning() {
 	}
 
+	@Deprecated
 	public SmallestMarginActiveLearning(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
+	public SmallestMarginActiveLearning(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+		super(classificationResultSupplier);
+	}
+
 	@Override
 	protected void calculateRanking(int count) {
-		learningModel.test(learningCandidateFeatureVectors);
+		IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier = getClassificationResultSupplier();
+		if (classificationResultSupplier == null)
+			learningModel.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
 		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
-		// learningModel.test(learningCandidateFeatureVectors);
-
-		// calculate overall score
-
 		for (FV fv : learningCandidateFeatureVectors) {
-			// double margin = learningModel.getLabelProbabilityMargin(fv);
 			double margin = calculateMargin(fv);
 			ranking.add(new EntryWithComparableKey<Double, FV>(margin, fv));
 
@@ -65,14 +68,19 @@ public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O,
 	}
 
 	private double calculateMargin(FV fv) {
-		Map<String, Double> probabilities = learningModel.getLabelDistribution(fv);
+		IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier = getClassificationResultSupplier();
+		Map<String, Double> labelDistribution = null;
+		if (classificationResultSupplier == null)
+			labelDistribution = learningModel.getLabelDistribution(fv);
+		else
+			labelDistribution = classificationResultSupplier.get().getLabelDistribution(fv).getValueDistribution();
 
-		if (probabilities == null)
+		if (labelDistribution == null)
 			return 0;
 
 		double max = Double.MIN_VALUE;
 		double second = Double.MIN_VALUE;
-		for (double value : probabilities.values())
+		for (double value : labelDistribution.values())
 			if (max <= value) {
 				second = max;
 				max = value;

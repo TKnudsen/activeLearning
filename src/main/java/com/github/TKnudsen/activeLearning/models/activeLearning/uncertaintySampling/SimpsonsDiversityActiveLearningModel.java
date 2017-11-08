@@ -9,20 +9,45 @@ import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.tools.DataConversion;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
 
+/**
+ * <p>
+ * Title: SimpsonsDiversityActiveLearningModel
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: (c) 2016-2017 Juergen Bernard,
+ * https://github.com/TKnudsen/activeLearning
+ * </p>
+ * 
+ * @author Juergen Bernard
+ * @version 1.03
+ */
 public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 	protected SimpsonsDiversityActiveLearningModel() {
 	}
 
+	@Deprecated
 	public SimpsonsDiversityActiveLearningModel(Classifier<O, FV> learningModel) {
 		super(learningModel);
 	}
 
+	public SimpsonsDiversityActiveLearningModel(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+		super(classificationResultSupplier);
+	}
+
 	@Override
 	protected void calculateRanking(int count) {
-		learningModel.test(learningCandidateFeatureVectors);
+		IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier = getClassificationResultSupplier();
+		if (classificationResultSupplier == null)
+			learningModel.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
 		queryApplicabilities = new HashMap<>();
@@ -30,7 +55,7 @@ public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureV
 
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
-			double v1 = getLabelProbabilityDiversity(learningModel.getLabelDistribution(fv));
+			double v1 = getLabelProbabilityDiversity(fv);
 
 			ranking.add(new EntryWithComparableKey<Double, FV>(v1, fv));
 
@@ -53,7 +78,15 @@ public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureV
 	 * @param labelDistribution
 	 * @return
 	 */
-	public double getLabelProbabilityDiversity(Map<String, Double> labelDistribution) {
+	public double getLabelProbabilityDiversity(FV fv) {
+		IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier = getClassificationResultSupplier();
+
+		Map<String, Double> labelDistribution = null;
+		if (classificationResultSupplier == null)
+			labelDistribution = learningModel.getLabelDistribution(fv);
+		else
+			labelDistribution = classificationResultSupplier.get().getLabelDistribution(fv).getValueDistribution();
+
 		if (labelDistribution == null)
 			return 0;
 

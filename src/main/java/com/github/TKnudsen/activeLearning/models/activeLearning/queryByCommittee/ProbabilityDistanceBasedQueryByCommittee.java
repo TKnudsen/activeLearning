@@ -28,7 +28,8 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard https://github.com/TKnudsen/activeLearning
+ * Copyright: (c) 2016 Juergen Bernard
+ * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
@@ -37,10 +38,12 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
 	protected ProbabilityDistanceBasedQueryByCommittee() {
 	}
-	
+
 	public ProbabilityDistanceBasedQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
+
+	// TODO add constructor with IProbabilisticClassificationResultSupplier
 
 	@Override
 	public String getComparisonMethod() {
@@ -53,7 +56,7 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 			classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
-		queryApplicabilities = new HashMap<>(); 
+		queryApplicabilities = new HashMap<>();
 		remainingUncertainty = 0.0;
 
 		// calculate overall score
@@ -97,7 +100,7 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - dist, fv));
 
-			queryApplicabilities.put(fv, dist);	
+			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
 
 			if (ranking.size() > count)
