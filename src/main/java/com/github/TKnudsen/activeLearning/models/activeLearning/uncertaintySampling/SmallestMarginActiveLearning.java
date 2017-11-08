@@ -92,7 +92,7 @@ public class SmallestMarginActiveLearning<O, FV extends AbstractFeatureVector<O,
 
 	@Override
 	public String getName() {
-		return "Smallest MMargin";
+		return "Smallest Margin";
 	}
 
 	@Override
