@@ -50,8 +50,11 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 	public KullbackLeiblerQueryByCommittee(List<Classifier<O, FV>> learningModels) {
 		super(learningModels);
 	}
-	
+
 	// TODO add constructor with IProbabilisticClassificationResultSupplier
+	public KullbackLeiblerQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+		super(classificationResultSuppliers, false);
+	}
 
 	@Override
 	public String getComparisonMethod() {
