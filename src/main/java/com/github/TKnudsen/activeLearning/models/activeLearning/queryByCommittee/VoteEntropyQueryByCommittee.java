@@ -12,6 +12,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 
@@ -45,7 +46,9 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		super(learningModels);
 	}
 
-	// TODO add constructor with IProbabilisticClassificationResultSupplier
+	public VoteEntropyQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+		super(classificationResultSuppliers, false);
+	}
 
 	@Override
 	public String getComparisonMethod() {
@@ -54,8 +57,11 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (Classifier<O, FV> classifier : getLearningModels())
-			classifier.test(learningCandidateFeatureVectors);
+		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
+
+		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+			for (Classifier<O, FV> classifier : getLearningModels())
+				classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
 		queryApplicabilities = new HashMap<>();
@@ -64,8 +70,12 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : getLearningModels())
-				labelDistributions.add(classifier.getLabelDistribution(fv));
+			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+				for (Classifier<O, FV> classifier : getLearningModels())
+					labelDistributions.add(classifier.getLabelDistribution(fv));
+			else
+				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)
+					labelDistributions.add(result.get().getLabelDistribution(fv).getValueDistribution());
 
 			// create unified distribution arrays
 			Set<String> labelSet = new HashSet<>();
@@ -91,16 +101,26 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 			if (distributions != null && distributions.size() > 0) {
 				Map<String, Double> winningLabels = new HashMap();
-				for (Classifier<O, FV> classifier : getLearningModels()) {
-					List<String> test = classifier.test(Arrays.asList(fv));
-					if (test != null && test.size() > 0) {
-						String label = classifier.test(Arrays.asList(fv)).get(0);
+				if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+					for (Classifier<O, FV> classifier : getLearningModels()) {
+						List<String> test = classifier.test(Arrays.asList(fv));
+						if (test != null && test.size() > 0) {
+							String label = classifier.test(Arrays.asList(fv)).get(0);
+							if (!winningLabels.containsKey(label))
+								winningLabels.put(label, 1.0);
+							else
+								winningLabels.put(label, winningLabels.get(label) + 1.0);
+						}
+					}
+				else
+					for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers) {
+						String label = result.get().getLabelDistribution(fv).getRepresentant();
 						if (!winningLabels.containsKey(label))
 							winningLabels.put(label, 1.0);
 						else
 							winningLabels.put(label, winningLabels.get(label) + 1.0);
+
 					}
-				}
 
 				for (String label : winningLabels.keySet())
 					winningLabels.put(label, winningLabels.get(label) / (double) getLearningModels().size());
