@@ -8,6 +8,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.statistics.SimpsonsDiversityIndex;
 import com.github.TKnudsen.ComplexDataObject.model.tools.DataConversion;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
@@ -92,42 +93,11 @@ public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureV
 
 		double[] histogram = DataConversion.toPrimitives(new ArrayList<>(labelDistribution.values()));
 
-		if (histogram == null)
-			return Double.NaN;
+		// convert a double distribution to an int distribution
+		// afterwards the lowest double value will have the value 1
+		int[] distribution = SimpsonsDiversityIndex.transformToIntDistribution(histogram);
 
-		double min = Double.MAX_VALUE;
-		for (int i = 0; i < histogram.length; i++)
-			if (histogram[i] > 0)
-				min = Math.min(min, histogram[i]);
-
-		if (min != Double.MAX_VALUE)
-			min = 1 / min;
-		else
-			min = 1;
-
-		double[] values = new double[histogram.length];
-		for (int i = 0; i < histogram.length; i++)
-			values[i] = histogram[i] * min;
-
-		for (int i = 0; i < histogram.length; i++)
-			if (values[i] > 0 && values[i] < 1.0)
-				values[i] = Math.ceil(values[i]);
-
-		double numberAll = 0;
-		double simpsonIndex = 0;
-		for (int i = 0; i < histogram.length; i++)
-			if (histogram[i] > 0) {
-				numberAll += histogram[i];
-				simpsonIndex += histogram[i] * (histogram[i] - 1);
-			}
-
-		if (numberAll == 0)
-			simpsonIndex = 0;
-		else if (numberAll * (numberAll - 1) != 0)
-			simpsonIndex /= numberAll * (numberAll - 1);
-		else
-			simpsonIndex = 1;
-		return simpsonIndex;
+		return SimpsonsDiversityIndex.calculate(distribution);
 	}
 
 	@Override
