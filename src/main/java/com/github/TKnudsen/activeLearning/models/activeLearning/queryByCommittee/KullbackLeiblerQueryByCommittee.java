@@ -51,7 +51,6 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 		super(learningModels);
 	}
 
-	// TODO add constructor with IProbabilisticClassificationResultSupplier
 	public KullbackLeiblerQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
 		super(classificationResultSuppliers, false);
 	}
@@ -63,8 +62,12 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 
 	@Override
 	protected void calculateRanking(int count) {
-		for (Classifier<O, FV> classifier : getLearningModels())
-			classifier.test(learningCandidateFeatureVectors);
+
+		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
+
+		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+			for (Classifier<O, FV> classifier : getLearningModels())
+				classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
 		queryApplicabilities = new HashMap<>();
@@ -73,8 +76,13 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : getLearningModels())
-				labelDistributions.add(classifier.getLabelDistribution(fv));
+
+			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+				for (Classifier<O, FV> classifier : getLearningModels())
+					labelDistributions.add(classifier.getLabelDistribution(fv));
+			else
+				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)
+					labelDistributions.add(result.get().getLabelDistribution(fv).getValueDistribution());
 
 			// create unified distribution arrays
 			Set<String> labelSet = new HashSet<>();

@@ -11,6 +11,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
 /**
@@ -43,7 +44,9 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 		super(learningModels);
 	}
 
-	// TODO add constructor with IProbabilisticClassificationResultSupplier
+	public ProbabilityDistanceBasedQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+		super(classificationResultSuppliers, false);
+	}
 
 	@Override
 	public String getComparisonMethod() {
@@ -52,6 +55,10 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 
 	@Override
 	protected void calculateRanking(int count) {
+
+		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
+
+		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
 		for (Classifier<O, FV> classifier : getLearningModels())
 			classifier.test(learningCandidateFeatureVectors);
 
@@ -62,8 +69,12 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 		// calculate overall score
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
-			for (Classifier<O, FV> classifier : getLearningModels())
-				labelDistributions.add(classifier.getLabelDistribution(fv));
+			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+				for (Classifier<O, FV> classifier : getLearningModels())
+					labelDistributions.add(classifier.getLabelDistribution(fv));
+			else
+				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)
+					labelDistributions.add(result.get().getLabelDistribution(fv).getValueDistribution());
 
 			// create unified distribution arrays
 			Set<String> labelSet = new HashSet<>();
