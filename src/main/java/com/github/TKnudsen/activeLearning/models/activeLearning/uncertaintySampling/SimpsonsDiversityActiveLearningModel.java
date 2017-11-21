@@ -8,7 +8,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
-import com.github.TKnudsen.ComplexDataObject.model.statistics.SimpsonsDiversityIndex;
+import com.github.TKnudsen.ComplexDataObject.model.statistics.SimpsonsIndex;
 import com.github.TKnudsen.ComplexDataObject.model.tools.DataConversion;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
@@ -95,9 +95,9 @@ public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureV
 
 		// convert a double distribution to an int distribution
 		// afterwards the lowest double value will have the value 1
-		int[] distribution = SimpsonsDiversityIndex.transformToIntDistribution(histogram);
+		int[] distribution = SimpsonsIndex.transformToIntDistribution(histogram);
 
-		return SimpsonsDiversityIndex.calculate(distribution);
+		return SimpsonsIndex.calculateSimpsonsIndexOfDiversity(distribution);
 	}
 
 	@Override
