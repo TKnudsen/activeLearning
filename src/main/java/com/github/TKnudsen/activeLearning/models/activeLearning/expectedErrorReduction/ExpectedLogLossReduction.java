@@ -26,15 +26,17 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampl
  * </p>
  * 
  * <p>
- * Description: Ranks potential learning candidates by estimating the expected error reduction when labeling a candidate with its respective label distribution. This is an implementation of the method proposed in Section 4.1 (Equation (4.2)) in
- * "Active Learning", by Burr Settles (2012).
+ * Description: Ranks potential learning candidates by estimating the expected
+ * error reduction when labeling a candidate with its respective label
+ * distribution. This is an implementation of the method proposed in Section 4.1
+ * (Equation (4.2)) in "Active Learning", by Burr Settles (2012).
  * </p>
  * 
  * @author Christian Ritter
  * @version 1.02
  */
 public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
-	
+
 	private WekaClassifierWrapper<O, FV> parameterizedClassifier = null;
 
 	@Deprecated
@@ -43,8 +45,11 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 	}
 
 	/**
-	 * Basic constructor. This active learning algorithm requires an instance of the classifier used for training (either the original or a new instance with identical parameterization). This classifier is NOT changed during active learning (it is
-	 * only used to create a copy). Note: This is currently only implemented for {@link WekaClassifierWrapper}.
+	 * Basic constructor. This active learning algorithm requires an instance of
+	 * the classifier used for training (either the original or a new instance
+	 * with identical parameterization). This classifier is NOT changed during
+	 * active learning (it is only used to create a copy). Note: This is
+	 * currently only implemented for {@link WekaClassifierWrapper}.
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
@@ -88,7 +93,7 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 					for (String label : labels) {
 						List<FV> newTrainingSet = new ArrayList<>();
 						for (FV fv1 : learningCandidateFeatureVectors) {
-							newTrainingSet.add((FV) fv1.clone());
+							newTrainingSet.add(fv1);
 						}
 						FV fv2 = (FV) fv.clone();
 						fv2.add(parameterizedClassifier.getClassAttribute(), label);
@@ -103,7 +108,7 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 						expectedError += dist.getValueDistribution().get(label) * calculatelogloss(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 					}
 				ranking.add(new EntryWithComparableKey<>(expectedError, fv));
-				if(ranking.size() > count) {
+				if (ranking.size() > count) {
 					ranking.removeLast();
 				}
 				remainingUncertainty += expectedError;
@@ -112,10 +117,10 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 			System.out.println("ExpectedLogLossReduction: remaining uncertainty = " + remainingUncertainty);
 		}
 	}
-	
+
 	private Double calculatelogloss(IProbabilisticClassificationResult<FV> classificationResult) {
 		double loss = 0.0;
-		for(FV fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			loss += EntropyBasedActiveLearning.calculateEntropy(classificationResult.getLabelDistribution(fv).getValueDistribution());
 		}
 		return loss;

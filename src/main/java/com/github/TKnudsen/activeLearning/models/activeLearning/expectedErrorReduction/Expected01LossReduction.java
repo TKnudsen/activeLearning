@@ -25,8 +25,10 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * <p>
- * Description: Ranks potential learning candidates by estimating the expected error reduction when labeling a candidate with its respective label distribution. This is an implementation of the method proposed in Section 4.1 (Equation (4.1)) in
- * "Active Learning", by Burr Settles (2012).
+ * Description: Ranks potential learning candidates by estimating the expected
+ * error reduction when labeling a candidate with its respective label
+ * distribution. This is an implementation of the method proposed in Section 4.1
+ * (Equation (4.1)) in "Active Learning", by Burr Settles (2012).
  * </p>
  * 
  * @author Christian Ritter
@@ -42,8 +44,11 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 	}
 
 	/**
-	 * Basic constructor. This active learning algorithm requires an instance of the classifier used for training (either the original or a new instance with identical parameterization). This classifier is NOT changed during active learning (it is
-	 * only used to create a copy). Note: This is currently only implemented for {@link WekaClassifierWrapper}.
+	 * Basic constructor. This active learning algorithm requires an instance of
+	 * the classifier used for training (either the original or a new instance
+	 * with identical parameterization). This classifier is NOT changed during
+	 * active learning (it is only used to create a copy). Note: This is
+	 * currently only implemented for {@link WekaClassifierWrapper}.
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
@@ -87,7 +92,7 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 					for (String label : labels) {
 						List<FV> newTrainingSet = new ArrayList<>();
 						for (FV fv1 : learningCandidateFeatureVectors) {
-							newTrainingSet.add((FV) fv1.clone());
+							newTrainingSet.add(fv1);
 						}
 						FV fv2 = (FV) fv.clone();
 						fv2.add(parameterizedClassifier.getClassAttribute(), label);
@@ -102,7 +107,7 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 						expectedError += dist.getValueDistribution().get(label) * calculate01loss(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 					}
 				ranking.add(new EntryWithComparableKey<>(expectedError, fv));
-				if(ranking.size() > count) {
+				if (ranking.size() > count) {
 					ranking.removeLast();
 				}
 				remainingUncertainty += expectedError;
@@ -114,7 +119,7 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 
 	private Double calculate01loss(IProbabilisticClassificationResult<FV> classificationResult) {
 		double loss = 0.0;
-		for(FV fv : learningCandidateFeatureVectors) {
+		for (FV fv : learningCandidateFeatureVectors) {
 			loss += 1.0 - classificationResult.getLabelDistribution(fv).getValueDistribution().get(classificationResult.getClass(fv));
 		}
 		return loss;
