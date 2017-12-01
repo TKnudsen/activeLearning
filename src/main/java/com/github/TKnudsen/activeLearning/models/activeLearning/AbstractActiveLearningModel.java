@@ -65,6 +65,14 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	protected abstract void calculateRanking(int count);
 
+	/**
+	 * getRanking should not be used to get the next candidates. Use
+	 * {@link AbstractActiveLearningModel#suggestCandidate()} or
+	 * {@link AbstractActiveLearningModel#suggestCandidates(int)} instead.
+	 * 
+	 * @return
+	 */
+	@Deprecated
 	public Ranking<EntryWithComparableKey<Double, FV>> getRanking() {
 		return ranking;
 	}
