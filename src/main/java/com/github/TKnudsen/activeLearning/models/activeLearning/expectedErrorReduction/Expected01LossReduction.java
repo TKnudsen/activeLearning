@@ -32,11 +32,11 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * @author Christian Ritter
- * @version 1.02
+ * @version 1.03
  */
 public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
-	private WekaClassifierWrapper<O, FV> parameterizedClassifier = null;
+	private Classifier<O, FV> parameterizedClassifier = null;
 
 	@Deprecated
 	public Expected01LossReduction(Classifier<O, FV> learningModel) {
@@ -46,14 +46,14 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 	/**
 	 * Basic constructor. This active learning algorithm requires an instance of
 	 * the classifier used for training (either the original or a new instance
-	 * with identical parameterization). This classifier is NOT changed during
-	 * active learning (it is only used to create a copy). Note: This is
-	 * currently only implemented for {@link WekaClassifierWrapper}.
+	 * with identical parameterization). If, and only if, this classifier is
+	 * extending {@link WekaClassifierWrapper} it is not changed during active
+	 * learning (it then uses a parameterized copy).
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
 	 */
-	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, WekaClassifierWrapper<O, FV> parameterizedClassifier) {
+	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
 	}
@@ -99,7 +99,10 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 						newTrainingSet.add(fv2);
 						Classifier<O, FV> newClassifier = null;
 						try {
-							newClassifier = ClassifierTools.createParameterizedCopy(parameterizedClassifier);
+							if (parameterizedClassifier instanceof WekaClassifierWrapper)
+								newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
+							else
+								newClassifier = parameterizedClassifier;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
