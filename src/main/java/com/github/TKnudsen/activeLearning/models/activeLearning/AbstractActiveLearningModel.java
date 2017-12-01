@@ -1,6 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,10 +96,19 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	@Override
 	public double getCandidateApplicabilityScore(FV featureVector) {
+		if (queryApplicabilities == null && ranking != null)
+			createQAfromRanking();
 		if (queryApplicabilities != null)
 			return queryApplicabilities.get(featureVector);
 
 		return Double.NaN;
+	}
+
+	private void createQAfromRanking() {
+		queryApplicabilities = new HashMap<>();
+		for(EntryWithComparableKey<Double, FV> entry : ranking) {
+			queryApplicabilities.put(entry.getValue(), -entry.getKey());
+		}
 	}
 
 	/**
@@ -107,6 +117,8 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	 * @return
 	 */
 	public Map<FV, Double> getCandidateScores() {
+		if (queryApplicabilities == null && ranking != null)
+			createQAfromRanking();
 		if (queryApplicabilities != null)
 			return new LinkedHashMap<>(queryApplicabilities);
 

@@ -5,10 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.tools.MathFunctions;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResult;
@@ -32,11 +34,12 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * @author Christian Ritter
- * @version 1.03
+ * @version 1.04
  */
 public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
 	private Classifier<O, FV> parameterizedClassifier = null;
+	private Supplier<List<FV>> trainingDataSupplier;
 
 	@Deprecated
 	public Expected01LossReduction(Classifier<O, FV> learningModel) {
@@ -52,10 +55,12 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
+	 * @param trainingDataSupplier
 	 */
-	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier) {
+	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
+		this.trainingDataSupplier = trainingDataSupplier;
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 				if (dist != null)
 					for (String label : labels) {
 						List<FV> newTrainingSet = new ArrayList<>();
-						for (FV fv1 : learningCandidateFeatureVectors) {
+						for (FV fv1 : trainingDataSupplier.get()) {
 							newTrainingSet.add(fv1);
 						}
 						FV fv2 = (FV) fv.clone();
@@ -106,8 +111,11 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-						expectedError += dist.getValueDistribution().get(label) * calculate01loss(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
+						try {
+							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
+							expectedError += dist.getValueDistribution().get(label) * calculate01loss(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
+						} catch (Exception e) {
+						}
 					}
 				ranking.add(new EntryWithComparableKey<>(expectedError, fv));
 				if (ranking.size() > count) {
