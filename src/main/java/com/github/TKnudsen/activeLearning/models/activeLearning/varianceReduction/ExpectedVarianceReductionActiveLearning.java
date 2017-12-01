@@ -1,4 +1,4 @@
-package com.github.TKnudsen.activeLearning.models.activeLearning.expectedInformationGain;
+package com.github.TKnudsen.activeLearning.models.activeLearning.varianceReduction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,30 +9,32 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.tools.StatisticsSupport;
+import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResult;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.data.classification.LabelDistribution;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.ClassifierTools;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.WekaClassifierWrapper;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 
 /**
  * <p>
- * Title: ExpectedInformationGainActiveLearning
+ * Title: VarianceReductionActiveLearning
  * </p>
  * 
  * <p>
- * Description: Ranks potential learning candidates by estimating the expected
- * information gain when labeling a candidate with its respective label
- * distribution. This is an implementation of the method proposed in Section 6.1
- * (Equation (6.2)) in "Active Learning", by Burr Settles (2012).
+ * Description: Ranks potential learning candidates by estimating the reduction
+ * in the variance of the resulting label distributions when labeling a
+ * candidate with its respective label distribution. This is an implementation
+ * of the method proposed in Section 4.2 (Equation (4.4)) in "Active Learning",
+ * by Burr Settles (2012).
  * </p>
  * 
  * @author Christian Ritter
  * @version 1.01
  */
-public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
 
 	private WekaClassifierWrapper<O, FV> parameterizedClassifier = null;
 
@@ -46,7 +48,7 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
 	 */
-	public ExpectedInformationGainActiveLearning(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, WekaClassifierWrapper<O, FV> parameterizedClassifier) {
+	public ExpectedVarianceReductionActiveLearning(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, WekaClassifierWrapper<O, FV> parameterizedClassifier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
 	}
@@ -77,7 +79,7 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 			FV fv = learningCandidateFeatureVectors.get(i);
 			LabelDistribution dist = dists.get(i);
 
-			double informationGain = EntropyBasedActiveLearning.calculateEntropy(getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
+			double variance = 0.0;
 			if (dist != null)
 				for (String label : labels) {
 					List<FV> newTrainingSet = new ArrayList<>();
@@ -94,26 +96,35 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 						e.printStackTrace();
 					}
 					newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-					informationGain -= dist.getValueDistribution().get(label) * EntropyBasedActiveLearning.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
+					variance += dist.getValueDistribution().get(label) * calculateExpectedVariance(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 				}
-			ranking.add(new EntryWithComparableKey<>(-informationGain, fv));
+			ranking.add(new EntryWithComparableKey<>(variance, fv));
 			if (ranking.size() > count) {
 				ranking.removeLast();
 			}
-			remainingUncertainty -= informationGain;
+			remainingUncertainty += variance;
 		}
 		remainingUncertainty /= U;
-		System.out.println("ExpectedInformationGainActiveLearning: remaining uncertainty = " + remainingUncertainty);
+		System.out.println("ExpectedVarianceReductionActiveLearning: remaining uncertainty = " + remainingUncertainty);
 
+	}
+
+	private Double calculateExpectedVariance(IProbabilisticClassificationResult<FV> classificationResult) {
+		double variance = 0.0;
+		for (FV fv : learningCandidateFeatureVectors) {
+			StatisticsSupport stats = new StatisticsSupport(classificationResult.getLabelDistribution(fv).getValueDistribution().values());
+			variance += stats.getVariance();
+		}
+		return variance;
 	}
 
 	@Override
 	public String getDescription() {
-		return "ExpectedInformationGainActiveLearning";
+		return "ExpectedVarianceReductionActiveLearning";
 	}
 
 	@Override
 	public String getName() {
-		return "ExpectedInformationGainActiveLearning";
+		return "ExpectedVarianceReductionActiveLearning";
 	}
 }
