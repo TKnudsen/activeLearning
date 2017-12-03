@@ -10,13 +10,13 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.data.classification.LabelDistribution;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.ClassifierTools;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.WekaClassifierWrapper;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
-import com.github.TKnudsen.activeLearning.models.activeLearning.uncertaintySampling.EntropyBasedActiveLearning;
 
 /**
  * <p>
@@ -81,7 +81,7 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 			FV fv = learningCandidateFeatureVectors.get(i);
 			LabelDistribution dist = dists.get(i);
 
-			double informationGain = EntropyBasedActiveLearning.calculateEntropy(getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
+			double informationGain = Entropy.calculateEntropy(getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
 			if (dist != null)
 				for (String label : labels) {
 					List<FV> newTrainingSet = new ArrayList<>();
@@ -102,7 +102,7 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 					}
 					try {
 						newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-						informationGain -= dist.getValueDistribution().get(label) * EntropyBasedActiveLearning.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
+						informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
 					} catch (Exception e) {
 					}
 				}

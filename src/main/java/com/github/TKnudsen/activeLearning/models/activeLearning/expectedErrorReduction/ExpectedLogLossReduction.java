@@ -11,6 +11,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResult;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.data.classification.LabelDistribution;
@@ -130,7 +131,7 @@ public class ExpectedLogLossReduction<O, FV extends AbstractFeatureVector<O, ? e
 	private Double calculatelogloss(IProbabilisticClassificationResult<FV> classificationResult) {
 		double loss = 0.0;
 		for (FV fv : learningCandidateFeatureVectors) {
-			loss += EntropyBasedActiveLearning.calculateEntropy(classificationResult.getLabelDistribution(fv).getValueDistribution());
+			loss += Entropy.calculateEntropy(classificationResult.getLabelDistribution(fv).getValueDistribution());
 		}
 		return loss;
 	}

@@ -7,6 +7,7 @@ import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
+import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
@@ -59,7 +60,7 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 			else
 				labelDistribution = classificationResultSupplier.get().getLabelDistribution(fv).getValueDistribution();
 
-			double entropy = calculateEntropy(labelDistribution);
+			double entropy = Entropy.calculateEntropy(labelDistribution);
 
 			ranking.add(new EntryWithComparableKey<Double, FV>(1 - entropy, fv));
 
@@ -72,20 +73,6 @@ public class EntropyBasedActiveLearning<O, FV extends AbstractFeatureVector<O, ?
 
 		remainingUncertainty /= (double) learningCandidateFeatureVectors.size();
 		System.out.println("EntropyBasedActiveLearning: remaining uncertainty = " + remainingUncertainty);
-	}
-
-	public static double calculateEntropy(Map<String, Double> labelDistribution) {
-		if (labelDistribution == null || labelDistribution.size() == 0)
-			return 0;
-
-		double entropy = 0.0;
-		for (String s : labelDistribution.keySet())
-			if (labelDistribution.get(s) > 0)
-				entropy -= (labelDistribution.get(s) * Math.log(labelDistribution.get(s)));
-
-		entropy /= Math.log(2.0);
-
-		return entropy;
 	}
 
 	@Override
