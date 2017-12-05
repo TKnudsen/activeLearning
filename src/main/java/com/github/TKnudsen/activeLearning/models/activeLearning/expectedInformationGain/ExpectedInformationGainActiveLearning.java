@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
@@ -77,35 +78,40 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 			labels.addAll(ld.getLabelSet());
 		}
 
+		boolean moreThanOneLabel = trainingDataSupplier.get().stream().map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet()).size() > 1;
+
 		for (int i = 0; i < U; i++) {
 			FV fv = learningCandidateFeatureVectors.get(i);
 			LabelDistribution dist = dists.get(i);
 
 			double informationGain = Entropy.calculateEntropy(getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
-			if (dist != null)
-				for (String label : labels) {
-					List<FV> newTrainingSet = new ArrayList<>();
-					for (FV fv1 : trainingDataSupplier.get()) {
-						newTrainingSet.add(fv1);
+			// only useful if more than one label is set
+			if (moreThanOneLabel) {
+				if (dist != null)
+					for (String label : labels) {
+						List<FV> newTrainingSet = new ArrayList<>();
+						for (FV fv1 : trainingDataSupplier.get()) {
+							newTrainingSet.add(fv1);
+						}
+						FV fv2 = (FV) fv.clone();
+						fv2.add(parameterizedClassifier.getClassAttribute(), label);
+						newTrainingSet.add(fv2);
+						Classifier<O, FV> newClassifier = null;
+						try {
+							if (parameterizedClassifier instanceof WekaClassifierWrapper)
+								newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
+							else
+								newClassifier = parameterizedClassifier;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
+							informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
+						} catch (Exception e) {
+						}
 					}
-					FV fv2 = (FV) fv.clone();
-					fv2.add(parameterizedClassifier.getClassAttribute(), label);
-					newTrainingSet.add(fv2);
-					Classifier<O, FV> newClassifier = null;
-					try {
-						if (parameterizedClassifier instanceof WekaClassifierWrapper)
-							newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
-						else
-							newClassifier = parameterizedClassifier;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					try {
-						newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-						informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
-					} catch (Exception e) {
-					}
-				}
+			}
 			ranking.add(new EntryWithComparableKey<>(-informationGain, fv));
 			if (ranking.size() > count) {
 				ranking.removeLast();
