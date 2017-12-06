@@ -134,7 +134,7 @@ public class ProbabilityDistanceBasedQueryByCommittee<O, FV extends AbstractFeat
 
 	@Override
 	public String getName() {
-		return "Prability Distance QBC";
+		return "Probability Distance QBC";
 	}
 
 	@Override
