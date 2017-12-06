@@ -221,11 +221,11 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 
 	@Override
 	public String getDescription() {
-		return "Expected01LossReduction";
+		return "Expected 01 Loss Reduction";
 	}
 
 	@Override
 	public String getName() {
-		return "Expected01LossReduction";
+		return "Expected 01 Loss Reduction";
 	}
 }

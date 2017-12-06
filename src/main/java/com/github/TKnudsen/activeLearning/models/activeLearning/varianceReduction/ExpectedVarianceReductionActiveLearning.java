@@ -136,11 +136,11 @@ public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatu
 
 	@Override
 	public String getDescription() {
-		return "ExpectedVarianceReduction";
+		return "Expected Variance Reduction";
 	}
 
 	@Override
 	public String getName() {
-		return "ExpectedVarianceReduction";
+		return "Expected Variance Reduction";
 	}
 }

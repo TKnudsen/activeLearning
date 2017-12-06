@@ -125,11 +125,11 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 
 	@Override
 	public String getDescription() {
-		return "ExpectedInformationGain";
+		return "Expected Information Gain";
 	}
 
 	@Override
 	public String getName() {
-		return "ExpectedInformationGain";
+		return "Expected Information Gain";
 	}
 }
