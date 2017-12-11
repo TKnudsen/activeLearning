@@ -137,7 +137,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 			// update ranking
 
-			ranking.add(new EntryWithComparableKey<Double, FV>(dist, fv));
+			ranking.add(new EntryWithComparableKey<Double, FV>(1 - dist, fv));
 
 			queryApplicabilities.put(fv, dist);
 			remainingUncertainty += dist;
