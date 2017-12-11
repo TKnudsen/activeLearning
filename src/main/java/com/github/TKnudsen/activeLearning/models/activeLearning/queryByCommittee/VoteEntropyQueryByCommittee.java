@@ -122,8 +122,13 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 
 					}
 
-				for (String label : winningLabels.keySet())
-					winningLabels.put(label, winningLabels.get(label) / (double) getLearningModels().size());
+				if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
+					for (String label : winningLabels.keySet())
+						winningLabels.put(label, winningLabels.get(label) / (double) getLearningModels().size());
+				else
+					for(String label : winningLabels.keySet())
+						winningLabels.put(label, winningLabels.get(label) / (double) classificationResultSuppliers.size());
+					
 
 				dist = Entropy.calculateEntropy(winningLabels);
 			} else
