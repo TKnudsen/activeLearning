@@ -7,20 +7,21 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
-public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> implements IActiveLearningModelClassification<O, FV>, ISelfDescription {
+public abstract class AbstractActiveLearningModel<FV extends IFeatureVectorObject<?, Feature<?>>>
+		implements IActiveLearningModelClassification<FV>, ISelfDescription {
 
 	protected List<FV> learningCandidateFeatureVectors;
 
 	@Deprecated
-	protected Classifier<O, FV> learningModel;
+	protected Classifier<FV> learningModel;
 	private IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier;
 
 	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
@@ -33,7 +34,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	}
 
 	@Deprecated
-	public AbstractActiveLearningModel(Classifier<O, FV> learningModel) {
+	public AbstractActiveLearningModel(Classifier<FV> learningModel) {
 		this.learningModel = learningModel;
 	}
 
@@ -106,7 +107,7 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 
 	private void createQAfromRanking() {
 		queryApplicabilities = new HashMap<>();
-		for(EntryWithComparableKey<Double, FV> entry : ranking) {
+		for (EntryWithComparableKey<Double, FV> entry : ranking) {
 			queryApplicabilities.put(entry.getValue(), -entry.getKey());
 		}
 	}
@@ -131,11 +132,11 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 	}
 
 	@Override
-	public ILearningModel<O, FV, String> getLearningModel() {
+	public ILearningModel<FV, String> getLearningModel() {
 		return learningModel;
 	}
 
-	public void setLearningModel(Classifier<O, FV> learningModel) {
+	public void setLearningModel(Classifier<FV> learningModel) {
 		this.learningModel = learningModel;
 	}
 
@@ -149,7 +150,8 @@ public abstract class AbstractActiveLearningModel<O, FV extends AbstractFeatureV
 		return classificationResultSupplier;
 	}
 
-	public void setClassificationResultSupplier(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+	public void setClassificationResultSupplier(
+			IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
 		this.classificationResultSupplier = classificationResultSupplier;
 	}
 }

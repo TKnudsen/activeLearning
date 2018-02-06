@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
@@ -30,22 +30,25 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard
+ * Copyright: (c) 2016-2018 Juergen Bernard
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.04
  */
-public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
+public class VoteComparisonQueryByCommittee<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractQueryByCommitteeActiveLearning<FV> {
 	protected VoteComparisonQueryByCommittee() {
 	}
 
-	public VoteComparisonQueryByCommittee(List<Classifier<O, FV>> learningModels) {
+	public VoteComparisonQueryByCommittee(List<Classifier<FV>> learningModels) {
 		super(learningModels);
 	}
 
-	public VoteComparisonQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+	public VoteComparisonQueryByCommittee(
+			List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers,
+			boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
 		super(classificationResultSuppliers, false);
 	}
 
@@ -59,7 +62,7 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
 
 		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-			for (Classifier<O, FV> classifier : getLearningModels())
+			for (Classifier<FV> classifier : getLearningModels())
 				classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -70,7 +73,7 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
 			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-				for (Classifier<O, FV> classifier : getLearningModels())
+				for (Classifier<FV> classifier : getLearningModels())
 					labelDistributions.add(classifier.getLabelDistribution(fv));
 			else
 				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)
@@ -101,17 +104,17 @@ public class VoteComparisonQueryByCommittee<O, FV extends AbstractFeatureVector<
 			if (distributions != null && distributions.size() > 0) {
 				Set<String> winningLabels = new HashSet<>();
 				if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-					for (Classifier<O, FV> classifier : getLearningModels()) {
+					for (Classifier<FV> classifier : getLearningModels()) {
 						List<String> test = classifier.test(Arrays.asList(fv));
 						if (test != null && test.size() > 0)
 							winningLabels.add(classifier.test(Arrays.asList(fv)).get(0));
 					}
 				else
-					for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers){
+					for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers) {
 						winningLabels.add(result.get().getLabelDistribution(fv).getRepresentant());
-						
+
 					}
-						
+
 				dist = (winningLabels.size() - 1) / (double) distributions.size();
 			} else
 				dist = 1;

@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
@@ -31,22 +31,25 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard
+ * Copyright: (c) 2016-2018 Juergen Bernard
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.04
  */
-public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
+public class VoteEntropyQueryByCommittee<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractQueryByCommitteeActiveLearning<FV> {
 	protected VoteEntropyQueryByCommittee() {
 	}
 
-	public VoteEntropyQueryByCommittee(List<Classifier<O, FV>> learningModels) {
+	public VoteEntropyQueryByCommittee(List<Classifier<FV>> learningModels) {
 		super(learningModels);
 	}
 
-	public VoteEntropyQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+	public VoteEntropyQueryByCommittee(
+			List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers,
+			boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
 		super(classificationResultSuppliers, false);
 	}
 
@@ -60,7 +63,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
 
 		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-			for (Classifier<O, FV> classifier : getLearningModels())
+			for (Classifier<FV> classifier : getLearningModels())
 				classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -71,7 +74,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 		for (FV fv : learningCandidateFeatureVectors) {
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
 			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-				for (Classifier<O, FV> classifier : getLearningModels())
+				for (Classifier<FV> classifier : getLearningModels())
 					labelDistributions.add(classifier.getLabelDistribution(fv));
 			else
 				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)
@@ -102,7 +105,7 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 			if (distributions != null && distributions.size() > 0) {
 				Map<String, Double> winningLabels = new HashMap();
 				if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-					for (Classifier<O, FV> classifier : getLearningModels()) {
+					for (Classifier<FV> classifier : getLearningModels()) {
 						List<String> test = classifier.test(Arrays.asList(fv));
 						if (test != null && test.size() > 0) {
 							String label = classifier.test(Arrays.asList(fv)).get(0);
@@ -126,9 +129,9 @@ public class VoteEntropyQueryByCommittee<O, FV extends AbstractFeatureVector<O, 
 					for (String label : winningLabels.keySet())
 						winningLabels.put(label, winningLabels.get(label) / (double) getLearningModels().size());
 				else
-					for(String label : winningLabels.keySet())
-						winningLabels.put(label, winningLabels.get(label) / (double) classificationResultSuppliers.size());
-					
+					for (String label : winningLabels.keySet())
+						winningLabels.put(label,
+								winningLabels.get(label) / (double) classificationResultSuppliers.size());
 
 				dist = Entropy.calculateEntropy(winningLabels);
 			} else

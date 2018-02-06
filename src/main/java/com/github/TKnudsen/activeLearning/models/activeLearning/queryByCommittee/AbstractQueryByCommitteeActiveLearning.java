@@ -2,8 +2,8 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommitte
 
 import java.util.List;
 
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
@@ -25,17 +25,18 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * <p>
  * <p>
- * Copyright: (c) 2016-2017 Juergen Bernard,
+ * Copyright: (c) 2016-2018 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  *
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.04
  */
-public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public abstract class AbstractQueryByCommitteeActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 
 	@Deprecated
-	private List<Classifier<O, FV>> learningModels;
+	private List<Classifier<FV>> learningModels;
 
 	private List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers;
 
@@ -43,12 +44,14 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 	}
 
 	@Deprecated
-	public AbstractQueryByCommitteeActiveLearning(List<Classifier<O, FV>> learningModels) {
+	public AbstractQueryByCommitteeActiveLearning(List<Classifier<FV>> learningModels) {
 		super(learningModels.get(0));
 		this.learningModels = learningModels;
 	}
 
-	public AbstractQueryByCommitteeActiveLearning(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+	public AbstractQueryByCommitteeActiveLearning(
+			List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers,
+			boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
 		super(classificationResultSuppliers.get(0));
 
 		this.classificationResultSuppliers = classificationResultSuppliers;
@@ -57,7 +60,7 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 	public abstract String getComparisonMethod();
 
 	@Override
-	public ILearningModel<O, FV, String> getLearningModel() {
+	public ILearningModel<FV, String> getLearningModel() {
 		if (learningModels != null && learningModels.size() > 0)
 			return learningModels.get(0);
 
@@ -65,12 +68,12 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 	}
 
 	@Deprecated
-	public List<Classifier<O, FV>> getLearningModels() {
+	public List<Classifier<FV>> getLearningModels() {
 		return learningModels;
 	}
 
 	@Deprecated
-	public void setLearningModels(List<Classifier<O, FV>> learningModels) {
+	public void setLearningModels(List<Classifier<FV>> learningModels) {
 		this.learningModels = learningModels;
 	}
 
@@ -78,7 +81,8 @@ public abstract class AbstractQueryByCommitteeActiveLearning<O, FV extends Abstr
 		return classificationResultSuppliers;
 	}
 
-	public void setClassificationResultSuppliers(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers) {
+	public void setClassificationResultSuppliers(
+			List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers) {
 		this.classificationResultSuppliers = classificationResultSuppliers;
 	}
 }

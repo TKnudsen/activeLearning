@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.statistics.SimpsonsIndex;
 import com.github.TKnudsen.ComplexDataObject.model.tools.DataConversion;
@@ -24,23 +24,25 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016-2017 Juergen Bernard,
+ * Copyright: (c) 2016-2018 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.04
  */
-public class SimpsonsDiversityActiveLearningModel<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class SimpsonsDiversityActiveLearningModel<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 	protected SimpsonsDiversityActiveLearningModel() {
 	}
 
 	@Deprecated
-	public SimpsonsDiversityActiveLearningModel(Classifier<O, FV> learningModel) {
+	public SimpsonsDiversityActiveLearningModel(Classifier<FV> learningModel) {
 		super(learningModel);
 	}
 
-	public SimpsonsDiversityActiveLearningModel(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
+	public SimpsonsDiversityActiveLearningModel(
+			IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier) {
 		super(classificationResultSupplier);
 	}
 

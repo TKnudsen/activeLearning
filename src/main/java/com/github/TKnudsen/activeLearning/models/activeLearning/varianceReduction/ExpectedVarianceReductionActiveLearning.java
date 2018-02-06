@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.tools.StatisticsSupport;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResult;
@@ -33,26 +33,29 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * by Burr Settles (2012).
  * </p>
  * 
- * @author Christian Ritter
- * @version 1.03
+ * @author Christian Ritter, Juergen Bernard
+ * @version 1.04
  */
-public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class ExpectedVarianceReductionActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 
-	private Classifier<O, FV> parameterizedClassifier = null;
+	private Classifier<FV> parameterizedClassifier = null;
 	private Supplier<List<FV>> trainingDataSupplier;
 
 	/**
-	 * Basic constructor. This active learning algorithm requires an instance of
-	 * the classifier used for training (either the original or a new instance
-	 * with identical parameterization). If, and only if, this classifier is
-	 * extending {@link WekaClassifierWrapper} it is not changed during active
-	 * learning (it then uses a parameterized copy).
+	 * Basic constructor. This active learning algorithm requires an instance of the
+	 * classifier used for training (either the original or a new instance with
+	 * identical parameterization). If, and only if, this classifier is extending
+	 * {@link WekaClassifierWrapper} it is not changed during active learning (it
+	 * then uses a parameterized copy).
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
 	 * @param trainingDataSupplier
 	 */
-	public ExpectedVarianceReductionActiveLearning(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
+	public ExpectedVarianceReductionActiveLearning(
+			IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier,
+			Classifier<FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
 		this.trainingDataSupplier = trainingDataSupplier;
@@ -80,7 +83,9 @@ public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatu
 			labels.addAll(ld.getLabelSet());
 		}
 
-		boolean moreThanOneLabel = trainingDataSupplier.get().stream().map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet()).size() > 1;
+		boolean moreThanOneLabel = trainingDataSupplier.get().stream()
+				.map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet())
+				.size() > 1;
 
 		for (int i = 0; i < U; i++) {
 			FV fv = learningCandidateFeatureVectors.get(i);
@@ -98,10 +103,11 @@ public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatu
 						FV fv2 = (FV) fv.clone();
 						fv2.add(parameterizedClassifier.getClassAttribute(), label);
 						newTrainingSet.add(fv2);
-						Classifier<O, FV> newClassifier = null;
+						Classifier<FV> newClassifier = null;
 						try {
 							if (parameterizedClassifier instanceof WekaClassifierWrapper)
-								newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
+								newClassifier = ClassifierTools
+										.createParameterizedCopy((WekaClassifierWrapper<FV>) parameterizedClassifier);
 							else
 								newClassifier = parameterizedClassifier;
 						} catch (Exception e) {
@@ -109,7 +115,8 @@ public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatu
 						}
 						try {
 							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-							variance += dist.getValueDistribution().get(label) * calculateExpectedVariance(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
+							variance += dist.getValueDistribution().get(label) * calculateExpectedVariance(
+									newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 						} catch (Exception e) {
 						}
 					}
@@ -128,7 +135,8 @@ public class ExpectedVarianceReductionActiveLearning<O, FV extends AbstractFeatu
 	private Double calculateExpectedVariance(IProbabilisticClassificationResult<FV> classificationResult) {
 		double variance = 0.0;
 		for (FV fv : learningCandidateFeatureVectors) {
-			StatisticsSupport stats = new StatisticsSupport(classificationResult.getLabelDistribution(fv).getValueDistribution().values());
+			StatisticsSupport stats = new StatisticsSupport(
+					classificationResult.getLabelDistribution(fv).getValueDistribution().values());
 			variance += stats.getVariance();
 		}
 		return variance;

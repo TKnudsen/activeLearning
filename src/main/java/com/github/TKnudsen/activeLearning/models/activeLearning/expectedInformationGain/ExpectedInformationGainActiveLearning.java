@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
@@ -31,26 +31,29 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * (Equation (6.2)) in "Active Learning", by Burr Settles (2012).
  * </p>
  * 
- * @author Christian Ritter
- * @version 1.03
+ * @author Christian Ritter, Juergen Bernard
+ * @version 1.04
  */
-public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class ExpectedInformationGainActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 
-	private Classifier<O, FV> parameterizedClassifier = null;
+	private Classifier<FV> parameterizedClassifier = null;
 	private Supplier<List<FV>> trainingDataSupplier;
 
 	/**
-	 * Basic constructor. This active learning algorithm requires an instance of
-	 * the classifier used for training (either the original or a new instance
-	 * with identical parameterization). If, and only if, this classifier is
-	 * extending {@link WekaClassifierWrapper} it is not changed during active
-	 * learning (it then uses a parameterized copy).
+	 * Basic constructor. This active learning algorithm requires an instance of the
+	 * classifier used for training (either the original or a new instance with
+	 * identical parameterization). If, and only if, this classifier is extending
+	 * {@link WekaClassifierWrapper} it is not changed during active learning (it
+	 * then uses a parameterized copy).
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
 	 * @param trainingDataSupplier
 	 */
-	public ExpectedInformationGainActiveLearning(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
+	public ExpectedInformationGainActiveLearning(
+			IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier,
+			Classifier<FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
 		this.trainingDataSupplier = trainingDataSupplier;
@@ -78,13 +81,16 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 			labels.addAll(ld.getLabelSet());
 		}
 
-		boolean moreThanOneLabel = trainingDataSupplier.get().stream().map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet()).size() > 1;
+		boolean moreThanOneLabel = trainingDataSupplier.get().stream()
+				.map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet())
+				.size() > 1;
 
 		for (int i = 0; i < U; i++) {
 			FV fv = learningCandidateFeatureVectors.get(i);
 			LabelDistribution dist = dists.get(i);
 
-			double informationGain = Entropy.calculateEntropy(getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
+			double informationGain = Entropy.calculateEntropy(
+					getClassificationResultSupplier().get().getLabelDistribution(fv).getValueDistribution());
 			// only useful if more than one label is set
 			if (moreThanOneLabel) {
 				if (dist != null)
@@ -96,10 +102,11 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 						FV fv2 = (FV) fv.clone();
 						fv2.add(parameterizedClassifier.getClassAttribute(), label);
 						newTrainingSet.add(fv2);
-						Classifier<O, FV> newClassifier = null;
+						Classifier<FV> newClassifier = null;
 						try {
 							if (parameterizedClassifier instanceof WekaClassifierWrapper)
-								newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
+								newClassifier = ClassifierTools
+										.createParameterizedCopy((WekaClassifierWrapper<FV>) parameterizedClassifier);
 							else
 								newClassifier = parameterizedClassifier;
 						} catch (Exception e) {
@@ -107,7 +114,9 @@ public class ExpectedInformationGainActiveLearning<O, FV extends AbstractFeature
 						}
 						try {
 							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-							informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(newClassifier.createClassificationResult(learningCandidateFeatureVectors).getLabelDistribution(fv).getValueDistribution());
+							informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(
+									newClassifier.createClassificationResult(learningCandidateFeatureVectors)
+											.getLabelDistribution(fv).getValueDistribution());
 						} catch (Exception e) {
 						}
 					}

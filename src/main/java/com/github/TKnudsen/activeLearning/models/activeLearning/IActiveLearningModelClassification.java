@@ -1,7 +1,7 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 
@@ -16,17 +16,18 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard,
+ * Copyright: (c) 2016-2018 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.02
+ * @version 1.03
  */
-public interface IActiveLearningModelClassification<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>> extends IActiveLearningModel<O, X, String> {
+public interface IActiveLearningModelClassification<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends IActiveLearningModel<FV, String> {
 
 	@Deprecated
-	public ILearningModel<O, X, String> getLearningModel();
+	public ILearningModel<FV, String> getLearningModel();
 
-	public IProbabilisticClassificationResultSupplier<X> getClassificationResultSupplier();
+	public IProbabilisticClassificationResultSupplier<FV> getClassificationResultSupplier();
 }

@@ -2,8 +2,8 @@ package com.github.TKnudsen.activeLearning.models.activeLearning;
 
 import java.util.List;
 
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 
 /**
@@ -19,24 +19,24 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016-2017 Juergen Bernard,
+ * Copyright: (c) 2016-2018 Juergen Bernard,
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.05
+ * @version 1.06
  */
-public interface IActiveLearningModel<O, X extends AbstractFeatureVector<O, ? extends Feature<O>>, Y> {
+public interface IActiveLearningModel<FV extends IFeatureVectorObject<?, Feature<?>>, Y> {
 
-	public void setLearningCandidates(List<X> featureVectors);
+	public void setLearningCandidates(List<FV> featureVectors);
 
-	public X suggestCandidate();
+	public FV suggestCandidate();
 
-	public List<X> suggestCandidates(int count);
+	public List<FV> suggestCandidates(int count);
 
-	public ILearningModel<O, X, Y> getLearningModel();
+	public ILearningModel<FV, Y> getLearningModel();
 
 	public double getRemainingUncertainty();
 
-	public double getCandidateApplicabilityScore(X featureVector);
+	public double getCandidateApplicabilityScore(FV featureVector);
 }

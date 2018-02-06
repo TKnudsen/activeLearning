@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
@@ -30,15 +30,16 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * <p>
- * Copyright: (c) 2016 Juergen Bernard
+ * Copyright: (c) 2016-2018 Juergen Bernard
  * https://github.com/TKnudsen/activeLearning
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.02
+ * @version 1.03
  */
 
-public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractQueryByCommitteeActiveLearning<O, FV> {
+public class KullbackLeiblerQueryByCommittee<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractQueryByCommitteeActiveLearning<FV> {
 
 	private boolean positiveDivergences = true;
 
@@ -47,11 +48,13 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 	protected KullbackLeiblerQueryByCommittee() {
 	}
 
-	public KullbackLeiblerQueryByCommittee(List<Classifier<O, FV>> learningModels) {
+	public KullbackLeiblerQueryByCommittee(List<Classifier<FV>> learningModels) {
 		super(learningModels);
 	}
 
-	public KullbackLeiblerQueryByCommittee(List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers, boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
+	public KullbackLeiblerQueryByCommittee(
+			List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers,
+			boolean fakeBooleanToBeDifferentThanDeprecateConstructor) {
 		super(classificationResultSuppliers, false);
 	}
 
@@ -66,7 +69,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 		List<IProbabilisticClassificationResultSupplier<FV>> classificationResultSuppliers = getClassificationResultSuppliers();
 
 		if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-			for (Classifier<O, FV> classifier : getLearningModels())
+			for (Classifier<FV> classifier : getLearningModels())
 				classifier.test(learningCandidateFeatureVectors);
 
 		ranking = new Ranking<>();
@@ -78,7 +81,7 @@ public class KullbackLeiblerQueryByCommittee<O, FV extends AbstractFeatureVector
 			List<Map<String, Double>> labelDistributions = new ArrayList<>();
 
 			if (classificationResultSuppliers == null || classificationResultSuppliers.size() == 0)
-				for (Classifier<O, FV> classifier : getLearningModels())
+				for (Classifier<FV> classifier : getLearningModels())
 					labelDistributions.add(classifier.getLabelDistribution(fv));
 			else
 				for (IProbabilisticClassificationResultSupplier<FV> result : classificationResultSuppliers)

@@ -9,9 +9,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
-import com.github.TKnudsen.ComplexDataObject.data.features.numericalData.NumericalFeatureVector;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.tools.MathFunctions;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResult;
@@ -34,31 +33,33 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * (Equation (4.1)) in "Active Learning", by Burr Settles (2012).
  * </p>
  * 
- * @author Christian Ritter
- * @version 1.04
+ * @author Christian Ritter, Juergen Bernard
+ * @version 1.05
  */
-public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class Expected01LossReduction<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 
-	private Classifier<O, FV> parameterizedClassifier = null;
+	private Classifier<FV> parameterizedClassifier = null;
 	private Supplier<List<FV>> trainingDataSupplier;
 
 	@Deprecated
-	public Expected01LossReduction(Classifier<O, FV> learningModel) {
+	public Expected01LossReduction(Classifier<FV> learningModel) {
 		super(learningModel);
 	}
 
 	/**
-	 * Basic constructor. This active learning algorithm requires an instance of
-	 * the classifier used for training (either the original or a new instance
-	 * with identical parameterization). If, and only if, this classifier is
-	 * extending {@link WekaClassifierWrapper} it is not changed during active
-	 * learning (it then uses a parameterized copy).
+	 * Basic constructor. This active learning algorithm requires an instance of the
+	 * classifier used for training (either the original or a new instance with
+	 * identical parameterization). If, and only if, this classifier is extending
+	 * {@link WekaClassifierWrapper} it is not changed during active learning (it
+	 * then uses a parameterized copy).
 	 * 
 	 * @param classificationResultSupplier
 	 * @param parameterizedClassifier
 	 * @param trainingDataSupplier
 	 */
-	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier, Classifier<O, FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
+	public Expected01LossReduction(IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier,
+			Classifier<FV> parameterizedClassifier, Supplier<List<FV>> trainingDataSupplier) {
 		super(classificationResultSupplier);
 		this.parameterizedClassifier = parameterizedClassifier;
 		this.trainingDataSupplier = trainingDataSupplier;
@@ -88,8 +89,10 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 					continue;
 				labels.addAll(ld.getLabelSet());
 			}
-			
-			boolean moreThanOneLabel = trainingDataSupplier.get().stream().map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet()).size() > 1;
+
+			boolean moreThanOneLabel = trainingDataSupplier.get().stream()
+					.map(x -> x.getAttribute(parameterizedClassifier.getClassAttribute())).collect(Collectors.toSet())
+					.size() > 1;
 
 			for (int i = 0; i < U; i++) {
 				FV fv = learningCandidateFeatureVectors.get(i);
@@ -107,10 +110,11 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 							FV fv2 = (FV) fv.clone();
 							fv2.add(parameterizedClassifier.getClassAttribute(), label);
 							newTrainingSet.add(fv2);
-							Classifier<O, FV> newClassifier = null;
+							Classifier<FV> newClassifier = null;
 							try {
 								if (parameterizedClassifier instanceof WekaClassifierWrapper)
-									newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) parameterizedClassifier);
+									newClassifier = ClassifierTools.createParameterizedCopy(
+											(WekaClassifierWrapper<FV>) parameterizedClassifier);
 								else
 									newClassifier = parameterizedClassifier;
 							} catch (Exception e) {
@@ -118,7 +122,8 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 							}
 							try {
 								newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
-								expectedError += dist.getValueDistribution().get(label) * calculate01loss(newClassifier.createClassificationResult(learningCandidateFeatureVectors));
+								expectedError += dist.getValueDistribution().get(label) * calculate01loss(
+										newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 							} catch (Exception e) {
 							}
 						}
@@ -137,7 +142,8 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 	private Double calculate01loss(IProbabilisticClassificationResult<FV> classificationResult) {
 		double loss = 0.0;
 		for (FV fv : learningCandidateFeatureVectors) {
-			loss += 1.0 - classificationResult.getLabelDistribution(fv).getValueDistribution().get(classificationResult.getClass(fv));
+			loss += 1.0 - classificationResult.getLabelDistribution(fv).getValueDistribution()
+					.get(classificationResult.getClass(fv));
 		}
 		return loss;
 	}
@@ -181,10 +187,11 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 					fv = (FV) fv.clone();
 					fv.add(learningModel.getClassAttribute(), label);
 					newTrainingSet.add(fv);
-					Classifier<O, FV> newClassifier = null;
+					Classifier<FV> newClassifier = null;
 					try {
 						if (learningModel instanceof WekaClassifierWrapper) {
-							newClassifier = ClassifierTools.createParameterizedCopy((WekaClassifierWrapper<O, FV>) learningModel);
+							newClassifier = ClassifierTools
+									.createParameterizedCopy((WekaClassifierWrapper<FV>) learningModel);
 							newClassifier.train(newTrainingSet, learningModel.getClassAttribute());
 						} else
 							throw new InstantiationException();
@@ -198,7 +205,8 @@ public class Expected01LossReduction<O, FV extends AbstractFeatureVector<O, ? ex
 						if (newClassifier == null)
 							break;
 						if (i != j) {
-							sum += 1 - calculateMaxProbability(newClassifier.getLabelDistribution(learningCandidateFeatureVectors.get(j)));
+							sum += 1 - calculateMaxProbability(
+									newClassifier.getLabelDistribution(learningCandidateFeatureVectors.get(j)));
 						}
 					}
 					loss += dist.get(label) * sum;

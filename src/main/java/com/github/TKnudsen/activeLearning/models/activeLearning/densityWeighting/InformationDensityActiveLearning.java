@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.AbstractFeatureVector;
 import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.features.FeatureType;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLearningModel;
@@ -18,22 +18,23 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  *
  * @author Christian Ritter
  */
-public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVector<O, ? extends Feature<O>>> extends AbstractActiveLearningModel<O, FV> {
+public class InformationDensityActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+		extends AbstractActiveLearningModel<FV> {
 
-	private AbstractActiveLearningModel<O, FV> baseModel;
+	private AbstractActiveLearningModel<FV> baseModel;
 	// keeping the density map can save time later
 	private Map<FV, Double> density;
 	// private double beta = 1.0; unused
 
-	protected InformationDensityActiveLearning(){
-		
+	protected InformationDensityActiveLearning() {
+
 	}
-	
-	public InformationDensityActiveLearning(Classifier<O, FV> learningModel, AbstractActiveLearningModel<O, FV> baseModel) {
+
+	public InformationDensityActiveLearning(Classifier<FV> learningModel, AbstractActiveLearningModel<FV> baseModel) {
 		super(learningModel);
 		this.baseModel = baseModel;
 	}
-	
+
 	// beta is unused
 	// public InformationDensityActiveLearning(Classifier<O, FV> learningModel,
 	// double beta, AbstractActiveLearningModel<O, FV> baseModel) {
@@ -42,7 +43,7 @@ public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVecto
 	// this.baseModel = baseModel;
 	// }
 
-	public void setBaseModel(AbstractActiveLearningModel<O, FV> baseModel) {
+	public void setBaseModel(AbstractActiveLearningModel<FV> baseModel) {
 		this.baseModel = baseModel;
 	}
 
@@ -66,14 +67,15 @@ public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVecto
 				double sim = 0.0;
 				for (int j = 0; j < U; j++) {
 					if (i != j) {
-						sim += cosineSimilarity(learningCandidateFeatureVectors.get(i), learningCandidateFeatureVectors.get(j));
+						sim += cosineSimilarity(learningCandidateFeatureVectors.get(i),
+								learningCandidateFeatureVectors.get(j));
 					}
 				}
 				sim /= U;
 				density.put(learningCandidateFeatureVectors.get(i), sim);
 			}
 		}
-//		baseModel.setTrainingData(this.trainingFeatureVectors);
+		// baseModel.setTrainingData(this.trainingFeatureVectors);
 		baseModel.setLearningCandidates(this.learningCandidateFeatureVectors);
 		baseModel.suggestCandidates(U);
 
@@ -103,7 +105,8 @@ public class InformationDensityActiveLearning<O, FV extends AbstractFeatureVecto
 			return 0.0;
 		double a = 0, b = 0, c = 0;
 		for (int i = 0; i < fv1.sizeOfFeatures(); i++) {
-			if (fv1.getFeature(i).getFeatureType() == FeatureType.DOUBLE && fv2.getFeature(i).getFeatureType() == FeatureType.DOUBLE) {
+			if (fv1.getFeature(i).getFeatureType() == FeatureType.DOUBLE
+					&& fv2.getFeature(i).getFeatureType() == FeatureType.DOUBLE) {
 				double v1 = (Double) fv1.getFeature(i).getFeatureValue();
 				double v2 = (Double) fv2.getFeature(i).getFeatureValue();
 				a += v1 * v2;
