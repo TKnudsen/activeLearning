@@ -34,10 +34,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * @author Christian Ritter, Juergen Bernard
- * @version 1.05
+ * @version 1.06
  */
-public class ExpectedLogLossReduction<FV extends IFeatureVectorObject<?, Feature<?>>>
-		extends AbstractActiveLearningModel<FV> {
+public class ExpectedLogLossReduction<FV extends IFeatureVectorObject<?, ?>> extends AbstractActiveLearningModel<FV> {
 
 	private Classifier<FV> parameterizedClassifier = null;
 	private Supplier<List<FV>> trainingDataSupplier;

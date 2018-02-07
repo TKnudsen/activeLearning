@@ -32,9 +32,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * @author Christian Ritter, Juergen Bernard
- * @version 1.04
+ * @version 1.05
  */
-public class ExpectedInformationGainActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class ExpectedInformationGainActiveLearning<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractActiveLearningModel<FV> {
 
 	private Classifier<FV> parameterizedClassifier = null;

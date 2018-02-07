@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
@@ -34,9 +33,9 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.04
+ * @version 1.05
  */
-public class ProbabilityDistanceBasedQueryByCommittee<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class ProbabilityDistanceBasedQueryByCommittee<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractQueryByCommitteeActiveLearning<FV> {
 	protected ProbabilityDistanceBasedQueryByCommittee() {
 	}

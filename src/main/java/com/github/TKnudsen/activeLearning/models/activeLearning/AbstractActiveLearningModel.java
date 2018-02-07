@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -15,7 +14,7 @@ import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificat
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
-public abstract class AbstractActiveLearningModel<FV extends IFeatureVectorObject<?, Feature<?>>>
+public abstract class AbstractActiveLearningModel<FV extends IFeatureVectorObject<?, ?>>
 		implements IActiveLearningModelClassification<FV>, ISelfDescription {
 
 	protected List<FV> learningCandidateFeatureVectors;

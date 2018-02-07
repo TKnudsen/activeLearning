@@ -2,7 +2,6 @@ package com.github.TKnudsen.activeLearning.models.activeLearning.queryByCommitte
 
 import java.util.List;
 
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
@@ -32,7 +31,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @author Juergen Bernard
  * @version 1.04
  */
-public abstract class AbstractQueryByCommitteeActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+public abstract class AbstractQueryByCommitteeActiveLearning<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractActiveLearningModel<FV> {
 
 	@Deprecated

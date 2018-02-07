@@ -1,6 +1,5 @@
 package com.github.TKnudsen.activeLearning.models.activeLearning;
 
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
@@ -23,7 +22,7 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * @author Juergen Bernard
  * @version 1.03
  */
-public interface IActiveLearningModelClassification<FV extends IFeatureVectorObject<?, Feature<?>>>
+public interface IActiveLearningModelClassification<FV extends IFeatureVectorObject<?, ?>>
 		extends IActiveLearningModel<FV, String> {
 
 	@Deprecated

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.statistics.SimpsonsIndex;
@@ -31,7 +30,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @author Juergen Bernard
  * @version 1.04
  */
-public class SimpsonsDiversityActiveLearningModel<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class SimpsonsDiversityActiveLearningModel<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractActiveLearningModel<FV> {
 	protected SimpsonsDiversityActiveLearningModel() {
 	}

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
@@ -35,10 +34,10 @@ import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.03
+ * @version 1.04
  */
 
-public class KullbackLeiblerQueryByCommittee<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class KullbackLeiblerQueryByCommittee<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractQueryByCommitteeActiveLearning<FV> {
 
 	private boolean positiveDivergences = true;

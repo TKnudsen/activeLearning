@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.ComplexDataObject.model.statistics.Entropy;
@@ -27,10 +26,9 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * </p>
  * 
  * @author Juergen Bernard
- * @version 1.04
+ * @version 1.05
  */
-public class EntropyBasedActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
-		extends AbstractActiveLearningModel<FV> {
+public class EntropyBasedActiveLearning<FV extends IFeatureVectorObject<?, ?>> extends AbstractActiveLearningModel<FV> {
 	protected EntropyBasedActiveLearning() {
 	}
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.features.Feature;
 import com.github.TKnudsen.ComplexDataObject.data.features.FeatureType;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
@@ -18,7 +17,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  *
  * @author Christian Ritter
  */
-public class InformationDensityActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class InformationDensityActiveLearning<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractActiveLearningModel<FV> {
 
 	private AbstractActiveLearningModel<FV> baseModel;

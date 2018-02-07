@@ -29,7 +29,7 @@ import com.github.TKnudsen.activeLearning.models.activeLearning.AbstractActiveLe
  * @author Juergen Bernard
  * @version 1.03
  */
-public class SmallestMarginActiveLearning<FV extends IFeatureVectorObject<?, Feature<?>>>
+public class SmallestMarginActiveLearning<FV extends IFeatureVectorObject<?, ?>>
 		extends AbstractActiveLearningModel<FV> {
 	protected SmallestMarginActiveLearning() {
 	}
