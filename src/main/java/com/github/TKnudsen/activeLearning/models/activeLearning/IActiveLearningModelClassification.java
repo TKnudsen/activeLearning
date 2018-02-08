@@ -22,7 +22,7 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * @author Juergen Bernard
  * @version 1.03
  */
-public interface IActiveLearningModelClassification<FV extends IFeatureVectorObject<?, ?>>
+public interface IActiveLearningModelClassification<FV>
 		extends IActiveLearningModel<FV, String> {
 
 	@Deprecated

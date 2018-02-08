@@ -26,7 +26,7 @@ import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
  * @author Juergen Bernard
  * @version 1.06
  */
-public interface IActiveLearningModel<FV extends IFeatureVectorObject<?, ?>, Y> {
+public interface IActiveLearningModel<FV, Y> {
 
 	public void setLearningCandidates(List<FV> featureVectors);
 

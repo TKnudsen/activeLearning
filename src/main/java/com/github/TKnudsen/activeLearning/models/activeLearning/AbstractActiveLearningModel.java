@@ -8,13 +8,14 @@ import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
+import com.github.TKnudsen.ComplexDataObject.data.interfaces.IKeyValueProvider;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
 
-public abstract class AbstractActiveLearningModel<FV extends IFeatureVectorObject<?, ?>>
+public abstract class AbstractActiveLearningModel<FV extends IKeyValueProvider<Object>>
 		implements IActiveLearningModelClassification<FV>, ISelfDescription {
 
 	protected List<FV> learningCandidateFeatureVectors;
