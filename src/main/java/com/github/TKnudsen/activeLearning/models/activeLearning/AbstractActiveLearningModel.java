@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.TKnudsen.ComplexDataObject.data.entry.EntryWithComparableKey;
-import com.github.TKnudsen.ComplexDataObject.data.interfaces.IFeatureVectorObject;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.IKeyValueProvider;
 import com.github.TKnudsen.ComplexDataObject.data.interfaces.ISelfDescription;
 import com.github.TKnudsen.ComplexDataObject.data.ranking.Ranking;
 import com.github.TKnudsen.DMandML.data.classification.IProbabilisticClassificationResultSupplier;
 import com.github.TKnudsen.DMandML.model.supervised.ILearningModel;
 import com.github.TKnudsen.DMandML.model.supervised.classifier.Classifier;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.IClassifier;
+import com.github.TKnudsen.DMandML.model.supervised.classifier.IProbabilisticClassifier;
 
 public abstract class AbstractActiveLearningModel<FV extends IKeyValueProvider<Object>>
 		implements IActiveLearningModelClassification<FV>, ISelfDescription {
@@ -21,7 +22,7 @@ public abstract class AbstractActiveLearningModel<FV extends IKeyValueProvider<O
 	protected List<FV> learningCandidateFeatureVectors;
 
 	@Deprecated
-	protected Classifier<FV> learningModel;
+	protected IProbabilisticClassifier<FV> learningModel;
 	private IProbabilisticClassificationResultSupplier<FV> classificationResultSupplier;
 
 	protected Ranking<EntryWithComparableKey<Double, FV>> ranking;
@@ -136,7 +137,7 @@ public abstract class AbstractActiveLearningModel<FV extends IKeyValueProvider<O
 		return learningModel;
 	}
 
-	public void setLearningModel(Classifier<FV> learningModel) {
+	public void setLearningModel(IProbabilisticClassifier<FV> learningModel) {
 		this.learningModel = learningModel;
 	}
 

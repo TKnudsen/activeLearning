@@ -113,7 +113,7 @@ public class ExpectedInformationGainActiveLearning<FV extends IFeatureVectorObje
 							e.printStackTrace();
 						}
 						try {
-							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
+							newClassifier.train(newTrainingSet);
 							informationGain -= dist.getValueDistribution().get(label) * Entropy.calculateEntropy(
 									newClassifier.createClassificationResult(learningCandidateFeatureVectors)
 											.getLabelDistribution(fv).getValueDistribution());

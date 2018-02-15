@@ -113,7 +113,7 @@ public class ExpectedVarianceReductionActiveLearning<FV extends IFeatureVectorOb
 							e.printStackTrace();
 						}
 						try {
-							newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
+							newClassifier.train(newTrainingSet);
 							variance += dist.getValueDistribution().get(label) * calculateExpectedVariance(
 									newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 						} catch (Exception e) {

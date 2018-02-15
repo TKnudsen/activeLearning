@@ -119,7 +119,7 @@ public class Expected01LossReduction<FV extends IFeatureVectorObject<?, ?>> exte
 								e.printStackTrace();
 							}
 							try {
-								newClassifier.train(newTrainingSet, parameterizedClassifier.getClassAttribute());
+								newClassifier.train(newTrainingSet);
 								expectedError += dist.getValueDistribution().get(label) * calculate01loss(
 										newClassifier.createClassificationResult(learningCandidateFeatureVectors));
 							} catch (Exception e) {
@@ -190,7 +190,7 @@ public class Expected01LossReduction<FV extends IFeatureVectorObject<?, ?>> exte
 						if (learningModel instanceof WekaClassifierWrapper) {
 							newClassifier = ClassifierTools
 									.createParameterizedCopy((WekaClassifierWrapper<FV>) learningModel);
-							newClassifier.train(newTrainingSet, learningModel.getClassAttribute());
+							newClassifier.train(newTrainingSet);
 						} else
 							throw new InstantiationException();
 					} catch (InstantiationException | IllegalAccessException e) {
